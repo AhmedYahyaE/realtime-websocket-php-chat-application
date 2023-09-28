@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-if(!isset($_SESSION['user_data']))
+if (!isset($_SESSION['user_data']))
 {
 	header('location:index.php');
 }
@@ -23,7 +23,7 @@ $user_data = $user_object->get_user_all_data();
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Chat application in php using web scocket programming</title>
+	<title>Real-time Chat application in php using WebSocket programming</title>
 	<!-- Bootstrap core CSS -->
     <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
 
@@ -82,7 +82,7 @@ $user_data = $user_object->get_user_all_data();
 <body>
 	<div class="container">
 		<br />
-        <h3 class="text-center">Realtime One to One Chat App using Ratchet WebSockets with PHP Mysql - Online Offline Status - 8</h3>
+        <h3 class="text-center">Real-time One-to-One Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status - 8</h3>
         <br />
 		<div class="row">
 			
@@ -100,35 +100,35 @@ $user_data = $user_object->get_user_all_data();
 					</div>
 					<div class="card-body" id="messages_area">
 					<?php
-					foreach($chat_data as $chat)
-					{
-						if(isset($_SESSION['user_data'][$chat['userid']]))
+						foreach ($chat_data as $chat)
 						{
-							$from = 'Me';
-							$row_class = 'row justify-content-start';
-							$background_class = 'text-dark alert-light';
-						}
-						else
-						{
-							$from = $chat['user_name'];
-							$row_class = 'row justify-content-end';
-							$background_class = 'alert-success';
-						}
+							if (isset($_SESSION['user_data'][$chat['userid']]))
+							{
+								$from = 'Me';
+								$row_class = 'row justify-content-start';
+								$background_class = 'text-dark alert-light';
+							}
+							else
+							{
+								$from = $chat['user_name'];
+								$row_class = 'row justify-content-end';
+								$background_class = 'alert-success';
+							}
 
-						echo '
-						<div class="'.$row_class.'">
-							<div class="col-sm-10">
-								<div class="shadow-sm alert '.$background_class.'">
-									<b>'.$from.' - </b>'.$chat["msg"].'
-									<br />
-									<div class="text-right">
-										<small><i>'.$chat["created_on"].'</i></small>
+							echo '
+								<div class="'.$row_class.'">
+									<div class="col-sm-10">
+										<div class="shadow-sm alert '.$background_class.'">
+											<b>'.$from.' - </b>'.$chat["msg"].'
+											<br />
+											<div class="text-right">
+												<small><i>'.$chat["created_on"].'</i></small>
+											</div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-						';
-					}
+							';
+						}
 					?>
 					</div>
 				</div>
@@ -146,21 +146,22 @@ $user_data = $user_object->get_user_all_data();
 			<div class="col-lg-4">
 				<?php
 
-				$login_user_id = '';
+					$login_user_id = '';
 
-				foreach($_SESSION['user_data'] as $key => $value)
-				{
-					$login_user_id = $value['id'];
+					foreach ($_SESSION['user_data'] as $key => $value) // User's Session was planted in index.php (upon login)
+					{
+						// echo $key . '=>' . print_r($value) . '<br>';
+						$login_user_id = $value['id'];
 				?>
-				<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
-				<div class="mt-3 mb-3 text-center">
-					<img src="<?php echo $value['profile']; ?>" width="150" class="img-fluid rounded-circle img-thumbnail" />
-					<h3 class="mt-2"><?php echo $value['name']; ?></h3>
-					<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
-					<input type="button" class="btn btn-primary mt-2 mb-2" name="logout" id="logout" value="Logout" />
-				</div>
+						<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
+						<div class="mt-3 mb-3 text-center">
+							<img src="<?php echo $value['profile']; ?>" width="150" class="img-fluid rounded-circle img-thumbnail" />
+							<h3 class="mt-2"><?php echo $value['name']; ?></h3>
+							<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
+							<input type="button" class="btn btn-primary mt-2 mb-2" name="logout" id="logout" value="Logout" />
+						</div>
 				<?php
-				}
+					}
 				?>
 
 				<div class="card mt-3">
@@ -168,18 +169,18 @@ $user_data = $user_object->get_user_all_data();
 					<div class="card-body" id="user_list">
 						<div class="list-group list-group-flush">
 						<?php
-						if(count($user_data) > 0)
+						if (count($user_data) > 0)
 						{
-							foreach($user_data as $key => $user)
+							foreach ($user_data as $key => $user)
 							{
 								$icon = '<i class="fa fa-circle text-danger"></i>';
 
-								if($user['user_login_status'] == 'Login')
+								if ($user['user_login_status'] == 'Login')
 								{
 									$icon = '<i class="fa fa-circle text-success"></i>';
 								}
 
-								if($user['user_id'] != $login_user_id)
+								if ($user['user_id'] != $login_user_id)
 								{
 									echo '
 									<a class="list-group-item list-group-item-action">
@@ -219,7 +220,7 @@ $user_data = $user_object->get_user_all_data();
 
 		    var background_class = '';
 
-		    if(data.from == 'Me')
+		    if (data.from == 'Me')
 		    {
 		    	row_class = 'row justify-content-start';
 		    	background_class = 'text-dark alert-light';
@@ -245,7 +246,7 @@ $user_data = $user_object->get_user_all_data();
 
 			event.preventDefault();
 
-			if($('#chat_form').parsley().isValid())
+			if ($('#chat_form').parsley().isValid())
 			{
 
 				var user_id = $('#login_user_id').val();
@@ -277,7 +278,7 @@ $user_data = $user_object->get_user_all_data();
 				{
 					var response = JSON.parse(data);
 
-					if(response.status == 1)
+					if (response.status == 1)
 					{
 						conn.close();
 						location = 'index.php';

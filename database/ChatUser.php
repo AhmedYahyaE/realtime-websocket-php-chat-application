@@ -272,9 +272,10 @@ class ChatUser
 
 	function get_user_data_by_id()
 	{
-		$query = "
-		SELECT * FROM chat_user_table 
-		WHERE user_id = :user_id";
+		$query = 
+			"SELECT * FROM chat_user_table 
+			WHERE user_id = :user_id"
+		;
 
 		$statement = $this->connect->prepare($query);
 
@@ -311,10 +312,11 @@ class ChatUser
 	{
 		$query =
 			"UPDATE chat_user_table 
-			SET user_name = :user_name, 
-			user_email = :user_email, 
-			user_password = :user_password, 
-			user_profile = :user_profile  
+			SET
+				user_name     = :user_name, 
+				user_email    = :user_email, 
+				user_password = :user_password, 
+				user_profile  = :user_profile  
 			WHERE user_id = :user_id"
 		;
 
