@@ -205,7 +205,7 @@ $user_data = $user_object->get_user_all_data();
 	<script type="text/javascript">
 		
 		$(document).ready(function(){
-
+			// This code is copied from: http://socketo.me/docs/hello-world#next_steps:~:text=Run%20the%20shell%20script%20again%2C%20open%20a%20couple%20of%20web%20browser%20windows%2C%20and%20open%20a%20Javascript%20console%20or%20a%20page%20with%20the%20following%20Javascript%3A
 			var conn = new WebSocket('ws://localhost:8080');
 			conn.onopen = function(e) {
 				console.log("Connection established!");
