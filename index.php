@@ -94,7 +94,7 @@ if (isset($_POST['login'])) // If the login HTML Form has been submitted
         <div class="container">
             <br />
             <br />
-            <h1 class="text-center">Realtime One to One Chat App using Ratchet WebSockets with PHP Mysql - Online Offline Status - 8</h1>
+            <h1 class="text-center">Real-time One-to-One Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status - 8</h1>
             <div class="row justify-content-md-center mt-5">
                 
                 <div class="col-md-4">
