@@ -1,12 +1,15 @@
 <?php
 
+// Import the namespaces of PHPMailer classes
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 
 
-// require 'vendor/autoload.php';
+// Include the Autoloading class of Composer
+require 'vendor/autoload.php';
+
 
 
 $error = '';
@@ -41,50 +44,48 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
 
     $user_data = $user_object->get_user_data_by_email(); // Check if the newly registered user's email already exists in our database table
 
-    // If the user registers with an already existing email, show an error message, else INSERT them into the database table
+    // If the user registers with an already existing email, show an error message, else INSERT them into the database table and send the confirmation mail to the user using PHPMailer package
     if (is_array($user_data) && count($user_data) > 0)
     {
-        $error = 'This Email Already Exists!';
+        $error = 'This email already exists!';
     }
     else
     {
         if ($user_object->save_data()) // The save_data() method returns a Boolean (true or false)
         {
+            /*
+                // Send the confirmation mail to the user using PHPMailer package    // PHPMailer: https://github.com/PHPMailer/PHPMailer
+                $mail = new PHPMailer(true); // Create an instance; passing `true` enables exceptions
 
-            $mail = new PHPMailer(true);
+                // Server settings
+                $mail->isSMTP(); // Send using SMTP
+                $mail->Host       = 'smtpout.secureserver.net'; // Set the SMTP server to send through
+                $mail->SMTPAuth   = true; // Enable SMTP authentication
+                $mail->Username   = 'emailaddress@test.com'; // SMTP username
+                $mail->Password   = 'password'; // SMTP password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Enable implicit TLS encryption
+                $mail->Port       = 80; // TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-            $mail->isSMTP();
+                // Recipients
+                $mail->setFrom('tutorial@webslesson.info', 'Webslesson');
+                $mail->addAddress($user_object->getUserEmail()); // Add a recipient    // Name is optional
 
-            $mail->Host = 'Host Name';
+                // Content
+                $mail->isHTML(true); // Set email format to HTML
+                $mail->Subject = 'Registration Verification for Chat Application Demo';
+                $mail->Body = '
+                    <p>Thank you for registering for Chat Application Demo.</p>
+                    <p>This is a verification email, please click the link to verify your email address.</p>
+                    <p><a href="http://localhost:81/tutorial/chat_application/verify.php?code='.$user_object->getUserVerificationCode().'">Click to Verify</a></p>
+                    <p>Thank you...</p>
+                ';
 
-            $mail->SMTPAuth = true;
-
-            $mail->Username   = 'SMTP Username'; // SMTP username
-            $mail->Password   = 'SMTP Password';
-
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-
-            $mail->Port = 80;
-
-            $mail->setFrom('tutorial@webslesson.info', 'Webslesson');
-
-            $mail->addAddress($user_object->getUserEmail());
-
-            $mail->isHTML(true);
-
-            $mail->Subject = 'Registration Verification for Chat Application Demo';
-
-            $mail->Body = '
-            <p>Thank you for registering for Chat Application Demo.</p>
-                <p>This is a verification email, please click the link to verify your email address.</p>
-                <p><a href="http://localhost:81/tutorial/chat_application/verify.php?code='.$user_object->getUserVerificationCode().'">Click to Verify</a></p>
-                <p>Thank you...</p>
-            ';
-
-            $mail->send();
+                $mail->send(); // Send email
+            */
 
 
-            $success_message = 'Verification Email sent to ' . $user_object->getUserEmail() . ', so before login first verify your email';
+            // $success_message = 'Verification Email sent to ' . $user_object->getUserEmail() . ', so before login first verify your email';
+            $success_message = 'Registration Successful!';
         }
         else
         {
@@ -159,6 +160,7 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
                             ';
                         }
                     ?>
+
                     <div class="card">
                         <div class="card-header">Register</div>
                         <div class="card-body">
@@ -186,7 +188,7 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
                             
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

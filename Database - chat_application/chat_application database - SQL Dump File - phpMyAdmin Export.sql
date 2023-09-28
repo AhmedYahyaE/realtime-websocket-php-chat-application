@@ -31,7 +31,8 @@ CREATE TABLE `chat_user_table` (
   `user_status` enum('Disabled','Enable') NOT NULL,
   `user_created_on` datetime NOT NULL,
   `user_verification_code` varchar(100) NOT NULL,
-  `user_login_status` enum('Logout','Login') NOT NULL
+  `user_login_status` enum('Logout','Login') NOT NULL,
+  `user_token` VARCHAR(32) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

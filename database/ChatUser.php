@@ -166,7 +166,7 @@ class ChatUser
 
 		$statement->bindParam(':user_email', $this->user_email);
 
-		if($statement->execute())
+		if ($statement->execute())
 		{
 			$user_data = $statement->fetch(PDO::FETCH_ASSOC);
 		}
@@ -190,7 +190,7 @@ class ChatUser
 		$statement->bindParam(':user_created_on'       , $this->user_created_on);
 		$statement->bindParam(':user_verification_code', $this->user_verification_code);
 
-		if($statement->execute())
+		if ($statement->execute())
 		{
 			return true;
 		}
@@ -202,10 +202,10 @@ class ChatUser
 
 	function is_valid_email_verification_code()
 	{
-		$query = "
-		SELECT * FROM chat_user_table 
-		WHERE user_verification_code = :user_verification_code
-		";
+		$query = 
+			"SELECT * FROM chat_user_table 
+			WHERE user_verification_code = :user_verification_code"
+		;
 
 		$statement = $this->connect->prepare($query);
 
@@ -213,7 +213,7 @@ class ChatUser
 
 		$statement->execute();
 
-		if($statement->rowCount() > 0)
+		if ($statement->rowCount() > 0)
 		{
 			return true;
 		}
@@ -225,19 +225,18 @@ class ChatUser
 
 	function enable_user_account()
 	{
-		$query = "
-		UPDATE chat_user_table 
-		SET user_status = :user_status 
-		WHERE user_verification_code = :user_verification_code
-		";
+		$query = 
+			"UPDATE chat_user_table
+			SET user_status = :user_status
+			WHERE user_verification_code = :user_verification_code"
+		;
 
 		$statement = $this->connect->prepare($query);
 
-		$statement->bindParam(':user_status', $this->user_status);
-
+		$statement->bindParam(':user_status'		   , $this->user_status);
 		$statement->bindParam(':user_verification_code', $this->user_verification_code);
 
-		if($statement->execute())
+		if ($statement->execute())
 		{
 			return true;
 		}
@@ -249,21 +248,19 @@ class ChatUser
 
 	function update_user_login_data()
 	{
-		$query = "
-		UPDATE chat_user_table 
-		SET user_login_status = :user_login_status, user_token = :user_token  
-		WHERE user_id = :user_id
-		";
+		$query =
+			"UPDATE chat_user_table 
+			SET user_login_status = :user_login_status, user_token = :user_token  
+			WHERE user_id = :user_id"
+		;
 
 		$statement = $this->connect->prepare($query);
 
 		$statement->bindParam(':user_login_status', $this->user_login_status);
+		$statement->bindParam(':user_token'		  , $this->user_token);
+		$statement->bindParam(':user_id'		  , $this->user_id);
 
-		$statement->bindParam(':user_token', $this->user_token);
-
-		$statement->bindParam(':user_id', $this->user_id);
-
-		if($statement->execute())
+		if ($statement->execute())
 		{
 			return true;
 		}
@@ -285,7 +282,7 @@ class ChatUser
 
 		try
 		{
-			if($statement->execute())
+			if ($statement->execute())
 			{
 				$user_data = $statement->fetch(PDO::FETCH_ASSOC);
 			}
@@ -312,28 +309,24 @@ class ChatUser
 
 	function update_data()
 	{
-		$query = "
-		UPDATE chat_user_table 
-		SET user_name = :user_name, 
-		user_email = :user_email, 
-		user_password = :user_password, 
-		user_profile = :user_profile  
-		WHERE user_id = :user_id
-		";
+		$query =
+			"UPDATE chat_user_table 
+			SET user_name = :user_name, 
+			user_email = :user_email, 
+			user_password = :user_password, 
+			user_profile = :user_profile  
+			WHERE user_id = :user_id"
+		;
 
 		$statement = $this->connect->prepare($query);
 
-		$statement->bindParam(':user_name', $this->user_name);
-
-		$statement->bindParam(':user_email', $this->user_email);
-
+		$statement->bindParam(':user_name'	  , $this->user_name);
+		$statement->bindParam(':user_email'   , $this->user_email);
 		$statement->bindParam(':user_password', $this->user_password);
+		$statement->bindParam(':user_profile' , $this->user_profile);
+		$statement->bindParam(':user_id'	  , $this->user_id);
 
-		$statement->bindParam(':user_profile', $this->user_profile);
-
-		$statement->bindParam(':user_id', $this->user_id);
-
-		if($statement->execute())
+		if ($statement->execute())
 		{
 			return true;
 		}
