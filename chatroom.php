@@ -82,10 +82,13 @@ $user_data = $user_object->get_user_all_data();
 	<body>
 		<div class="container">
 			<br />
-			<h3 class="text-center">Real-time One-to-One Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status - 8</h3>
+			<h3 class="text-center">Real-time One-to-One Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
 			<br />
 			<div class="row">
-				
+
+
+
+				<!-- Chat Area Start -->
 				<div class="col-lg-8">
 					<div class="card">
 						<div class="card-header">
@@ -98,51 +101,58 @@ $user_data = $user_object->get_user_all_data();
 								</div>
 							</div>
 						</div>
-						<div class="card-body" id="messages_area">
-						<?php
-							foreach ($chat_data as $chat)
-							{
-								if (isset($_SESSION['user_data'][$chat['userid']]))
+						<div class="card-body" id="messages_area"> <!-- This    id="messages_area"    is used down at the bottom by JavaScript to append chat messages -->
+							<?php
+								foreach ($chat_data as $chat)
 								{
-									$from = 'Me';
-									$row_class = 'row justify-content-start';
-									$background_class = 'text-dark alert-light';
-								}
-								else
-								{
-									$from = $chat['user_name'];
-									$row_class = 'row justify-content-end';
-									$background_class = 'alert-success';
-								}
+									if (isset($_SESSION['user_data'][$chat['userid']]))
+									{
+										$from = 'Me';
+										$row_class = 'row justify-content-start';
+										$background_class = 'text-dark alert-light';
+									}
+									else
+									{
+										$from = $chat['user_name'];
+										$row_class = 'row justify-content-end';
+										$background_class = 'alert-success';
+									}
 
-								echo '
-									<div class="'.$row_class.'">
-										<div class="col-sm-10">
-											<div class="shadow-sm alert '.$background_class.'">
-												<b>'.$from.' - </b>'.$chat["msg"].'
-												<br />
-												<div class="text-right">
-													<small><i>'.$chat["created_on"].'</i></small>
+									echo '
+										<div class="'.$row_class.'">
+											<div class="col-sm-10">
+												<div class="shadow-sm alert '.$background_class.'">
+													<b>'.$from.' - </b>'.$chat["msg"].'
+													<br />
+													<div class="text-right">
+														<small><i>'.$chat["created_on"].'</i></small>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								';
-							}
-						?>
+									';
+								}
+							?>
 						</div>
 					</div>
 
-					<form method="post" id="chat_form" data-parsley-errors-container="#validation_error">
+					<!-- Chat HTML Form -->
+					<form method="post" id="chat_form" data-parsley-errors-container="#validation_error"> <!-- This Chat HTML Form submission is handled by JavaScript down below at the bottom of this file -->
 						<div class="input-group mb-3">
 							<textarea class="form-control" id="chat_message" name="chat_message" placeholder="Type Message Here" data-parsley-maxlength="1000" data-parsley-pattern="/^[a-zA-Z0-9\s]+$/" required></textarea>
 							<div class="input-group-append">
 								<button type="submit" name="send" id="send" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
 							</div>
 						</div>
+
+						<!-- Display Parsley library Validation Errors of the Chat HTML Form -->
 						<div id="validation_error"></div>
 					</form>
 				</div>
+				<!-- Chat Area End -->
+
+
+
 				<div class="col-lg-4">
 					<?php
 
@@ -203,16 +213,19 @@ $user_data = $user_object->get_user_all_data();
 		</div>
 	</body>
 	<script type="text/javascript">
-		
 		$(document).ready(function(){
+			// Handling the client side part (browser) of the WebSocket connection (using JavaScript)
 			// This code is copied from: http://socketo.me/docs/hello-world#next_steps:~:text=Run%20the%20shell%20script%20again%2C%20open%20a%20couple%20of%20web%20browser%20windows%2C%20and%20open%20a%20Javascript%20console%20or%20a%20page%20with%20the%20following%20Javascript%3A
-			var conn = new WebSocket('ws://localhost:8080');
+			// You can find the WebSocket object/class (a Browser Web API) documentation on: The WebSocket Browser Web API: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API    and    The WebSocket object: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+			var conn = new WebSocket('ws://localhost:8080'); // Create the Browser Web API WebSocket object i.e. Start the WebSocket connection!    // Initiate/Start the WebSocket connection in the browser. Check the browser's console.
+			console.log(conn);
+
 			conn.onopen = function(e) {
 				console.log("Connection established!");
 			};
 
-			conn.onmessage = function(e) {
-				console.log(e.data);
+			conn.onmessage = function(e) { // When a chat message is sent or received
+				console.log(e.data); // Display the sent or received chat message
 
 				var data = JSON.parse(e.data);
 
@@ -231,37 +244,38 @@ $user_data = $user_object->get_user_all_data();
 					background_class = 'alert-success';
 				}
 
-				var html_data = "<div class='"+row_class+"'><div class='col-sm-10'><div class='shadow-sm alert "+background_class+"'><b>"+data.from+" - </b>"+data.msg+"<br /><div class='text-right'><small><i>"+data.dt+"</i></small></div></div></div></div>";
+				var html_data = "<div class='" + row_class + "'><div class='col-sm-10'><div class='shadow-sm alert " + background_class + "'><b>" + data.from + " - </b>" + data.msg + "<br /><div class='text-right'><small><i>" + data.dt + "</i></small></div></div></div></div>";
 
 				$('#messages_area').append(html_data);
 
-				$("#chat_message").val("");
+				$("#chat_message").val(""); // Empty the chat <textarea> after the chat message has been sent
 			};
 
-			$('#chat_form').parsley();
+			$('#chat_form').parsley(); // Fire up Parsley JavaScript form validation library on the Chat HTML Form
 
-			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight);
+			console.log($('#messages_area')[0]);
+			console.log($('#messages_area'));
 
-			$('#chat_form').on('submit', function(event){
+			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area after submitting the chat message
 
-				event.preventDefault();
 
-				if ($('#chat_form').parsley().isValid())
+
+			// Handling Chat HTML Form Submission (Sending chat messages)
+			$('#chat_form').on('submit', function(event) { // When the Chat HTML Form is submitted
+				event.preventDefault(); // Prevent actual HTML Form submission to avoid page refresh which can ruin user experience (i.e. Prevent form submission by HTML. JavaScript will handle form submission.)
+
+				if ($('#chat_form').parsley().isValid()) // If the submitted data passes Parsley library validation
 				{
-
 					var user_id = $('#login_user_id').val();
-
-					var message = $('#chat_message').val();
-
-					var data = {
+					var message = $('#chat_message').val(); // The chat message written by a user in the assigned chat <textarea>
+					var data    = {
 						userId : user_id,
-						msg : message
+						msg    : message
 					};
 
-					conn.send(JSON.stringify(data));
+					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend)    // Convert the JavaScript object to a JSON string
 
-					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight);
-
+					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area after submitting the chat message
 				}
 
 			});

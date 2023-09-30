@@ -10,7 +10,8 @@ require dirname(__DIR__) . "/database/PrivateChat.php";
 
 
 
-class Chat implements MessageComponentInterface { // Chat class is our custom class
+// http://socketo.me/docs/hello-world#next_steps:~:text=We%27ll%20start%20off%20by%20creating%20a%20class.%20This%20class%20will%20be%20our%20chat%20%22application%22.%20This%20basic%20application%20will%20listen%20for%204%20events
+class Chat implements MessageComponentInterface { // The 'Chat' class is our custom WebSocket handler class that implements the 'MessageComponentInterface'
     protected $clients;
 
     public function __construct() {
@@ -19,17 +20,20 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
     }
 
     public function onOpen(ConnectionInterface $conn) {
+        /* echo '<pre>', var_dump($conn), '</pre>';
+        exit; */
 
         // Store the new connection to send messages to later
         echo 'Server Started';
 
         $this->clients->attach($conn);
 
+
         $querystring = $conn->httpRequest->getUri()->getQuery();
 
         parse_str($querystring, $queryarray);
 
-        if(isset($queryarray['token']))
+        if (isset($queryarray['token']))
         {
 
             $user_object = new \ChatUser;
@@ -65,7 +69,7 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
 
         $data = json_decode($msg, true);
 
-        if($data['command'] == 'private')
+        if ($data['command'] == 'private')
         {
             //private chat
 
@@ -103,7 +107,7 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
 
             foreach($this->clients as $client)
             {
-                if($from == $client)
+                if ($from == $client)
                 {
                     $data['from'] = 'Me';
                 }
@@ -112,7 +116,7 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
                     $data['from'] = $sender_user_name;
                 }
 
-                if($client->resourceId == $receiver_user_connection_id || $from == $client)
+                if ($client->resourceId == $receiver_user_connection_id || $from == $client)
                 {   
                     $client->send(json_encode($data));
                 }
@@ -156,7 +160,7 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
                     $client->send($msg);
                 }*/
 
-                if($from == $client)
+                if ($from == $client)
                 {
                     $data['from'] = 'Me';
                 }
@@ -176,7 +180,7 @@ class Chat implements MessageComponentInterface { // Chat class is our custom cl
 
         parse_str($querystring, $queryarray);
 
-        if(isset($queryarray['token']))
+        if (isset($queryarray['token']))
         {
 
             $user_object = new \ChatUser;
