@@ -16,7 +16,7 @@ require('database/ChatRooms.php');
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Real-time Chat application in php using WebSocket programming</title>
+		<title>Real-time One-to-One Chat application in php using WebSocket programming</title>
 		<!-- Bootstrap core CSS -->
 		<link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
 		<link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

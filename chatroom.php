@@ -1,21 +1,23 @@
 <?php 
 session_start();
 
-if (!isset($_SESSION['user_data']))
+
+if (!isset($_SESSION['user_data'])) // If the user is unauthenticated / logged out, redirect them to the login page
 {
 	header('location:index.php');
 }
 
-require('database/ChatUser.php');
+require('database/ChatUser.php'); // To display all Chat Users/Members (on the right side of the web page), and to display User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
+require('database/ChatRooms.php'); // To display Chat History here in this file
 
-require('database/ChatRooms.php');
 
+// To display the Chat History (all chat messages) here in this file (to fetch it from the `chatrooms` database table)
 $chat_object = new ChatRooms;
-
 $chat_data = $chat_object->get_all_chat_data();
 
-$user_object = new ChatUser;
 
+// To display all Chat Users/Members (on the right side of the web page), and to display User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
+$user_object = new ChatUser;
 $user_data = $user_object->get_user_all_data();
 
 ?>
@@ -26,10 +28,9 @@ $user_data = $user_object->get_user_all_data();
 		<title>Real-time Chat application in php using WebSocket programming</title>
 		<!-- Bootstrap core CSS -->
 		<link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
-
 		<link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-
 		<link rel="stylesheet" type="text/css" href="vendor-front/parsley/parsley.css"/>
+		<link rel="icon" type="image/x-icon" href="vendor-front/bubble-chat.png"> <!-- HTML Favicon -->
 
 		<!-- Bootstrap core JavaScript -->
 		<script src="vendor-front/jquery/jquery.min.js"></script>
@@ -82,7 +83,7 @@ $user_data = $user_object->get_user_all_data();
 	<body>
 		<div class="container">
 			<br />
-			<h3 class="text-center">Real-time One-to-One Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
+			<h3 class="text-center">Real-time One-to-One Chat and Group Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
 			<br />
 			<div class="row">
 
@@ -101,17 +102,20 @@ $user_data = $user_object->get_user_all_data();
 								</div>
 							</div>
 						</div>
+
+						<!-- Actual Chat Area -->
 						<div class="card-body" id="messages_area"> <!-- This    id="messages_area"    is used down at the bottom by JavaScript to append chat messages -->
 							<?php
+								// Display Chat History (from the `chatrooms` database table)
 								foreach ($chat_data as $chat)
 								{
-									if (isset($_SESSION['user_data'][$chat['userid']]))
+									if (isset($_SESSION['user_data'][$chat['userid']])) // Check if the user is the original sender of the Chat History message (Check if the user is the original sender of the message fetched from the `chatrooms` database table)
 									{
 										$from = 'Me';
 										$row_class = 'row justify-content-start';
 										$background_class = 'text-dark alert-light';
 									}
-									else
+									else // If the user is NOT the sender of the Chat History message fetched from the `chatrooms` database table
 									{
 										$from = $chat['user_name'];
 										$row_class = 'row justify-content-end';
@@ -119,13 +123,13 @@ $user_data = $user_object->get_user_all_data();
 									}
 
 									echo '
-										<div class="'.$row_class.'">
+										<div class="' . $row_class . '">
 											<div class="col-sm-10">
-												<div class="shadow-sm alert '.$background_class.'">
-													<b>'.$from.' - </b>'.$chat["msg"].'
+												<div class="shadow-sm alert ' . $background_class . '">
+													<b>' . $from . ' - </b>'. $chat["msg"] . '
 													<br />
 													<div class="text-right">
-														<small><i>'.$chat["created_on"].'</i></small>
+														<small><i>' . $chat["created_on"] . '</i></small>
 													</div>
 												</div>
 											</div>
@@ -134,6 +138,7 @@ $user_data = $user_object->get_user_all_data();
 								}
 							?>
 						</div>
+						<!-- Actual Chat Area -->
 					</div>
 
 					<!-- Chat HTML Form -->
@@ -174,36 +179,41 @@ $user_data = $user_object->get_user_all_data();
 						}
 					?>
 
+
+
+					<!-- Display all Chat Users/Members (on the right side of the page), and their Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table) -->
 					<div class="card mt-3">
-						<div class="card-header">User List</div>
+						<div class="card-header"><b>User List</b></div>
 						<div class="card-body" id="user_list">
 							<div class="list-group list-group-flush">
-							<?php
-							if (count($user_data) > 0)
-							{
-								foreach ($user_data as $key => $user)
-								{
-									$icon = '<i class="fa fa-circle text-danger"></i>';
-
-									if ($user['user_login_status'] == 'Login')
+								<?php
+									if (count($user_data) > 0) // If there are chat users in the `chat_user_table` database table
 									{
-										$icon = '<i class="fa fa-circle text-success"></i>';
-									}
+										foreach ($user_data as $key => $user)
+										{
+											// Dispaly User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
+											$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the 'Offline' Status
 
-									if ($user['user_id'] != $login_user_id)
-									{
-										echo '
-										<a class="list-group-item list-group-item-action">
-											<img src="'.$user["user_profile"].'" class="img-fluid rounded-circle img-thumbnail" width="50" />
-											<span class="ml-1"><strong>'.$user["user_name"].'</strong></span>
-											<span class="mt-2 float-right">'.$icon.'</span>
-										</a>
-										';
-									}
+											// If the user is authenticated/logged in, show the 'green' circle to denote the 'Online' Status
+											if ($user['user_login_status'] == 'Login')
+											{
+												$icon = '<i class="fa fa-circle text-success"></i>'; // Show a 'green' circle to denote the 'Online' Status
+											}
 
-								}
-							}
-							?>
+											// To display all Chat Users/Members EXCEPT the authenticated/logged-in user (We don't want to display the currently authenticated user to themselves. We want to exclude them.)
+											if ($user['user_id'] != $login_user_id)
+											{
+												echo '
+													<a class="list-group-item list-group-item-action">
+														<img src="' . $user["user_profile"] . '" class="img-fluid rounded-circle img-thumbnail" width="50" />
+														<span class="ml-1"><strong>'. $user["user_name"] . '</strong></span>
+														<span class="mt-2 float-right">' . $icon . '</span>
+													</a>
+												';
+											}
+										}
+									}
+								?>
 							</div>
 						</div>
 					</div>
@@ -220,47 +230,90 @@ $user_data = $user_object->get_user_all_data();
 			var conn = new WebSocket('ws://localhost:8080'); // Create the Browser Web API WebSocket object i.e. Start the WebSocket connection!    // Initiate/Start the WebSocket connection in the browser. Check the browser's console.
 			console.log(conn);
 
+
+
+			// Triggered when a WebSocket Connection is opnend    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/open_event
 			conn.onopen = function(e) {
 				console.log("Connection established!");
 			};
 
-			conn.onmessage = function(e) { // When a chat message is sent or received
-				console.log(e.data); // Display the sent or received chat message
 
-				var data = JSON.parse(e.data);
+
+			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This includes the message sent by the current sender i.e. When a user sends a message, THEY (the sender) receive it again through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
+			// Note: This    conn.onmessage    function receives all messages from our custom WebSocket handler Chat.php class
+			conn.onmessage = function(e) { // When a chat message is sent or received, display it in the chat area
+				// console.log(e);
+				// console.log(e.data); // Display the sent or received chat message
+
+
+				var data = JSON.parse(e.data); // Convert the chat message (whether sent or received) from a JSON string to a JavaScript Object
+				console.log(data); // Log the chat message (whether sent or received)
+				// Note: 'Me' and 'dt' (date) are sent from the backend from the Chat.php class
 
 				var row_class = '';
-
 				var background_class = '';
 
-				if (data.from == 'Me')
+				// If the user is the original sender of the message i.e. If the chat message is 'sent' i.e. If the chat message is sent by the current user (i.e. the user that is currently using the browser window i.e. 'Me'), make the chat message on the left side, and also play that specific notification audio
+				if (data.from == 'Me') // Note: 'Me' and 'dt' (date) are sent from the backend from the Chat.php class
 				{
 					row_class = 'row justify-content-start';
 					background_class = 'text-dark alert-light';
+
+					// Play this specific notification sound when a chat message is 'sent'    // https://dev.to/shantanu_jana/how-to-play-sound-on-button-click-in-javascript-3m48
+					var myNotificationAudioPath = 'vendor-front/sounds/joyous-chime-notification.mp3';
 				}
-				else
+				else // If the user is not the sender of the message (they're just a receiver) i.e. If the chat message is 'received' i.e. If the chat message is sent by another user (i.e. the chat message is received from another user i.e. the chat message is sent by a user other than the current user who is currently using the browser window), make the received chat message on the right side and give it a green color (using the Bootstrap 'alert-success' CSS class), and also play that OTHER specific notification audio
 				{
 					row_class = 'row justify-content-end';
 					background_class = 'alert-success';
+
+					// Play this specific notification sound when a chat message is 'received'    // https://dev.to/shantanu_jana/how-to-play-sound-on-button-click-in-javascript-3m48
+					var myNotificationAudioPath = 'vendor-front/sounds/light-hearted-message-tone.mp3';
 				}
 
-				var html_data = "<div class='" + row_class + "'><div class='col-sm-10'><div class='shadow-sm alert " + background_class + "'><b>" + data.from + " - </b>" + data.msg + "<br /><div class='text-right'><small><i>" + data.dt + "</i></small></div></div></div></div>";
 
-				$('#messages_area').append(html_data);
+				// Play the specific notification audio based on whether the chat message is 'sent' or 'received'
+				let myAudio = new Audio(myNotificationAudioPath); // https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement/Audio
+				myAudio.play(); // myNotificationAudioPath    was defined inside the last if-else statement block
 
+				// Note: The chat message will show up on the left or the right side depending on the 'data.from' JavaScript Object property (determined by the last if condition)
+				// var html_data = "<div class='" + row_class + "'><div class='col-sm-10'><div class='shadow-sm alert " + background_class + "'><b>" + data.from + " - </b>" + data.msg + "<br /><div class='text-right'><small><i>" + data.dt + "</i></small></div></div></div></div>"; // JavaScript String Literals
+				var html_data = // JavaScript Template Literals
+					`
+						<div class='${row_class}'>
+							<div class='col-sm-10'>
+								<div class='shadow-sm alert ${background_class}'>
+									<b>${data.from} - </b>${data.msg}
+									<br>
+									<div class='text-right'>
+										<small>
+											<i>${data.dt}</i>
+										</small>
+									</div>
+								</div>
+							</div>
+						</div>
+					`
+				;
+
+				$('#messages_area').append(html_data); // Display the chat message (whether sent or received)
 				$("#chat_message").val(""); // Empty the chat <textarea> after the chat message has been sent
 			};
 
-			$('#chat_form').parsley(); // Fire up Parsley JavaScript form validation library on the Chat HTML Form
 
-			console.log($('#messages_area')[0]);
-			console.log($('#messages_area'));
 
-			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area after submitting the chat message
+ 			// Fire up Parsley JavaScript form validation library on the Chat HTML Form
+			$('#chat_form').parsley();
 
 
 
-			// Handling Chat HTML Form Submission (Sending chat messages)
+			// console.log($('#messages_area')); // The jQuery wrapper
+			// console.log($('#messages_area')[0]); // The <div> DOM element itself
+			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area to show latest messages (after the web page has loaded)
+
+
+
+			// Handling Chat HTML Form Submission (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
 			$('#chat_form').on('submit', function(event) { // When the Chat HTML Form is submitted
 				event.preventDefault(); // Prevent actual HTML Form submission to avoid page refresh which can ruin user experience (i.e. Prevent form submission by HTML. JavaScript will handle form submission.)
 
@@ -269,20 +322,19 @@ $user_data = $user_object->get_user_all_data();
 					var user_id = $('#login_user_id').val();
 					var message = $('#chat_message').val(); // The chat message written by a user in the assigned chat <textarea>
 					var data    = {
-						userId : user_id,
-						msg    : message
+						userId: user_id,
+						msg   : message
 					};
 
-					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend)    // Convert the JavaScript object to a JSON string
-
-					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area after submitting the chat message
+					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend (to the onMessage() method of the Chat.php class))    // Convert the JavaScript Object to a JSON string (to send it to the server (our custom WebSocket handler Chat.php class))
+					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area to show latest messages (after submitting the Chat HTML Form i.e. after sending the chat message)
 				}
-
 			});
+
+
 			
 			// Logout (When the Logout button is clicked (the button is in this file))
 			$('#logout').click(function(){
-
 				user_id = $('#login_user_id').val();
 
 				$.ajax({
@@ -295,15 +347,13 @@ $user_data = $user_object->get_user_all_data();
 
 						if (response.status == 1) // 'data' is the response from the server. It contains the 'status' key. Check the first if condition in action.php
 						{
-							conn.close();
+							conn.close(); // Closes the WebSocket connection    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
 							location = 'index.php'; // Redirect the user to the Login Page (index.php)
 						}
 					}
 				})
 
 			});
-
 		});
-
 	</script>
 </html>

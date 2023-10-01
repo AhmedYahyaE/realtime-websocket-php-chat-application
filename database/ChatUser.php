@@ -1,9 +1,11 @@
 <?php
+// This class (a User Model) is used to store the users in the `chat_user_table` in the database table
 
-// ChatUser.php
+
 
 class ChatUser
 {
+	// `chat_user_table` database table column names
 	private $user_id;
 	private $user_name;
 	private $user_email;
@@ -278,7 +280,6 @@ class ChatUser
 		;
 
 		$statement = $this->connect->prepare($query);
-
 		$statement->bindParam(':user_id', $this->user_id);
 
 		try
@@ -296,6 +297,8 @@ class ChatUser
 		{
 			echo $error->getMessage();
 		}
+
+
 		return $user_data;
 	}
 
@@ -340,14 +343,12 @@ class ChatUser
 
 	function get_user_all_data()
 	{
-		$query = "
-		SELECT * FROM chat_user_table 
-		";
+		$query =
+			"SELECT * FROM chat_user_table "
+		;
 
 		$statement = $this->connect->prepare($query);
-
 		$statement->execute();
-
 		$data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 		return $data;
@@ -355,8 +356,8 @@ class ChatUser
 
 	function get_user_all_data_with_status_count()
 	{
-		$query = "
-		SELECT user_id, user_name, user_profile, user_login_status, (SELECT COUNT(*) FROM chat_message WHERE to_user_id = :user_id AND from_user_id = chat_user_table.user_id AND status = 'No') AS count_status FROM chat_user_table
+		$query =
+			"SELECT user_id, user_name, user_profile, user_login_status, (SELECT COUNT(*) FROM chat_message WHERE to_user_id = :user_id AND from_user_id = chat_user_table.user_id AND status = 'No') AS count_status FROM chat_user_table
 		";
 
 		$statement = $this->connect->prepare($query);
