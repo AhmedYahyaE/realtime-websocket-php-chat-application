@@ -10,9 +10,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'leave')
 	$user_object = new ChatUser;
 
 	$user_object->setUserId($_POST['user_id']);
-
-	$user_object->setUserLoginStatus('Logout'); // We change the login status of the user in the database table in order to show the correct color (Green (online) / Red (offline)) of the User Login Status i.e. Login Status for the user (either Online (logged-in) or Offline (logged-out))
-
+	$user_object->setUserLoginStatus('Logout'); // We change the login status (the `user_login_status` column) of the user in the `chat_user_table` database table in order to show the correct color (Green (Online) / Red (Offline)) Status of the User Login Status i.e. Login Status for the user (either Online (logged-in) or Offline (logged-out))
 	$user_object->setUserToken($_SESSION['user_data'][$_POST['user_id']]['token']);
 
 	if ($user_object->update_user_login_data())

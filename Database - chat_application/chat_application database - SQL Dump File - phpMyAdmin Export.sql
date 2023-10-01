@@ -9,6 +9,8 @@
 -- Table structure for table `chatrooms`
 --
 
+
+-- Create `chatrooms` for Group Chat
 CREATE TABLE `chatrooms` (
   `id` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
@@ -34,6 +36,33 @@ CREATE TABLE `chat_user_table` (
   `user_login_status` enum('Logout','Login') NOT NULL,
   `user_token` VARCHAR(32) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+-- Create `chat_message` for Private Chat
+CREATE TABLE IF NOT EXISTS `chat`.`chat_message` (
+  `chat_message_id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `to_user_id` INT NOT NULL,
+  `from_user_id` INT NOT NULL,
+  `chat_message` MEDIUMTEXT NOT NULL,
+  `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` ENUM('Yes', 'No') NOT NULL
+) COLLATE utf8mb4_bin;
+
+
+
+-- Create `chat_message` for Private Chat
+-- CREATE TABLE `chat`.`chat_message` (
+--   `chat_message_id` INT NOT NULL AUTO_INCREMENT ,
+--   `to_user_id` INT NOT NULL ,
+--   `from_user_id` INT NOT NULL ,
+--   `chat_message` MEDIUMTEXT NOT NULL ,
+--   `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--   `status` ENUM('Yes','No') NOT NULL ,
+--   PRIMARY KEY (`chat_message_id`)
+-- ) ENGINE = InnoDB CHARSET=utf8mb4 COLLATE utf8mb4_bin;
+
+
 
 --
 -- Indexes for dumped tables

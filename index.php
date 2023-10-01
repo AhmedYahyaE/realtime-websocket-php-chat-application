@@ -73,7 +73,7 @@ if (isset($_POST['login'])) // If the login HTML Form has been submitted
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Load Chat from Mysql Database | Real-time PHP Chat Application using Websocket</title>
+        <title>Real-time One-to-One & Group Chat Application using Websocket</title>
 
         <!-- Bootstrap core CSS -->
         <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +94,7 @@ if (isset($_POST['login'])) // If the login HTML Form has been submitted
         <div class="container">
             <br />
             <br />
-            <h1 class="text-center">Real-time One-to-One Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status - 8</h1>
+            <h1 class="text-center">Real-time One-to-One & Group Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h1>
             <div class="row justify-content-md-center mt-5">
                 
                 <div class="col-md-4">

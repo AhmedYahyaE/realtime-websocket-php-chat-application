@@ -1,4 +1,7 @@
 <?php 
+// This file is for Group Chat. Check privatechat.php for One-to-One Chat (Private Chat)
+
+
 session_start();
 
 
@@ -25,7 +28,7 @@ $user_data = $user_object->get_user_all_data();
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Real-time Chat application in php using WebSocket programming</title>
+		<title>Real-time Group Chat Application in PHP using WebSocket Programming</title>
 		<!-- Bootstrap core CSS -->
 		<link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
 		<link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -77,13 +80,12 @@ $user_data = $user_object->get_user_all_data();
 				overflow-y: auto;
 				background-color:#e6e6e6;
 			}
-
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<br />
-			<h3 class="text-center">Real-time One-to-One Chat and Group Chat App using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
+			<h3 class="text-center">Real-time Group Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
 			<br />
 			<div class="row">
 
@@ -98,7 +100,7 @@ $user_data = $user_object->get_user_all_data();
 									<h3>Chat Room</h3>
 								</div>
 								<div class="col col-sm-6 text-right">
-									<a href="privatechat.php" class="btn btn-success btn-sm">Private Chat</a>
+									<a href="privatechat.php" class="btn btn-success btn-sm">Go to Private Chat</a>
 								</div>
 							</div>
 						</div>
@@ -160,7 +162,6 @@ $user_data = $user_object->get_user_all_data();
 
 				<div class="col-lg-4">
 					<?php
-
 						$login_user_id = '';
 
 						foreach ($_SESSION['user_data'] as $key => $value) // User's Session was planted in index.php (upon login)
@@ -168,6 +169,7 @@ $user_data = $user_object->get_user_all_data();
 							// echo $key . '=>' . print_r($value) . '<br>';
 							$login_user_id = $value['id'];
 					?>
+							<!-- Display authenticated/logged-in user profile data (on the right side of the page) -->
 							<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
 							<div class="mt-3 mb-3 text-center">
 								<img src="<?php echo $value['profile']; ?>" width="150" class="img-fluid rounded-circle img-thumbnail" />
@@ -192,12 +194,12 @@ $user_data = $user_object->get_user_all_data();
 										foreach ($user_data as $key => $user)
 										{
 											// Dispaly User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
-											$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the 'Offline' Status
+											$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the User 'Offline' Status
 
-											// If the user is authenticated/logged in, show the 'green' circle to denote the 'Online' Status
+											// If the user is authenticated/logged in (based on the `user_login_status` column of the `chat_user_table` database table, not the browser's Session), show the 'green' circle to denote the User 'Online' Status
 											if ($user['user_login_status'] == 'Login')
 											{
-												$icon = '<i class="fa fa-circle text-success"></i>'; // Show a 'green' circle to denote the 'Online' Status
+												$icon = '<i class="fa fa-circle text-success"></i>'; // Show a 'green' circle to denote the User 'Online' Status
 											}
 
 											// To display all Chat Users/Members EXCEPT the authenticated/logged-in user (We don't want to display the currently authenticated user to themselves. We want to exclude them.)
@@ -333,7 +335,7 @@ $user_data = $user_object->get_user_all_data();
 
 
 			
-			// Logout (When the Logout button is clicked (the button is in this file))
+			// Logout (When the Logout button is clicked (the button is in this file)) (N.B. This changes the `user_login_status` column of the `chat_user_table` database table from 'Login' to 'Logout')
 			$('#logout').click(function(){
 				user_id = $('#login_user_id').val();
 

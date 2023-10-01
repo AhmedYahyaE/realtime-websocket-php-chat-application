@@ -108,7 +108,7 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Register | Real-time PHP Chat Application using Websocket</title>
+        <title>Register | Real-time PHP Chat Application using WebSocket</title>
 
         <!-- Bootstrap core CSS -->
         <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
@@ -132,7 +132,7 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
         <div class="containter">
             <br />
             <br />
-            <h1 class="text-center">Chat Application in PHP & MySql using WebSocket - Email Verification</h1>
+            <h1 class="text-center">Chat Application in PHP & MySQL using WebSocket - Email Verification</h1>
             
             <div class="row justify-content-md-center">
                 <div class="col col-md-4 mt-5">

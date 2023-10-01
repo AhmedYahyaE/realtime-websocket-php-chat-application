@@ -53,7 +53,7 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Chat application in php using web scocket programming</title>
+	<title>Real-time Chat application in PHP using WebSocket Ratchet Library</title>
 	<!-- Bootstrap core CSS -->
     <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -71,7 +71,7 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
 	<div class="container">
 		<br />
         <br />
-        <h1 class="text-center">Real-time PHP Chat Application using WebSocket</h1>
+        <h1 class="text-center">Real-time One-to-One & Group Chat Application using WebSocket</h1>
         <br />
         <br />
         <?php echo $message; ?> <!-- echo the Profile Update success message -->

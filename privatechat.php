@@ -1,22 +1,23 @@
-<?php 
+<?php
+// This file is for One-to-One Chat (Private Chat). Check chatroom.php for Group Chat
+
 
 session_start();
 
-if (!isset($_SESSION['user_data']))
+if (!isset($_SESSION['user_data'])) // If the user is unauthenticated / logged out, redirect them to the login page
 {
 	header('location:index.php');
 }
 
+
 require('database/ChatUser.php');
-
 require('database/ChatRooms.php');
-
 ?>
 
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Real-time One-to-One Chat application in php using WebSocket programming</title>
+		<title>Real-time One-to-One Chat application in PHP using WebSocket Programming</title>
 		<!-- Bootstrap core CSS -->
 		<link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
 		<link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -77,84 +78,82 @@ require('database/ChatRooms.php');
 
 				<div class="col-lg-3 col-md-4 col-sm-5" style="background-color: #f1f1f1; height: 100vh; border-right:1px solid #ccc;">
 					<?php
-					
-					$login_user_id = '';
+						$login_user_id = '';
+						$token = '';
 
-					$token = '';
-
-					foreach($_SESSION['user_data'] as $key => $value)
-					{
-						$login_user_id = $value['id'];
-
-						$token = $value['token'];
-
+						foreach($_SESSION['user_data'] as $key => $value)
+						{
+							$login_user_id = $value['id'];
+							$token = $value['token'];
 					?>
-					<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
+							<!-- Display authenticated/logged-in user profile data (on the left side of the page) -->
+							<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
+							<input type="hidden" name="is_active_chat" id="is_active_chat" value="No" />
 
-					<input type="hidden" name="is_active_chat" id="is_active_chat" value="No" />
-
-					<div class="mt-3 mb-3 text-center">
-						<img src="<?php echo $value['profile']; ?>" class="img-fluid rounded-circle img-thumbnail" width="150" />
-						<h3 class="mt-2"><?php echo $value['name']; ?></h3>
-						<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
-						<input type="button" class="btn btn-primary mt-2 mb-2" id="logout" name="logout" value="Logout" />
-					</div>
+							<div class="mt-3 mb-3 text-center">
+								<img src="<?php echo $value['profile']; ?>" class="img-fluid rounded-circle img-thumbnail" width="150" />
+								<h3 class="mt-2"><?php echo $value['name']; ?></h3>
+								<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
+								<input type="button" class="btn btn-primary mt-2 mb-2" id="logout" name="logout" value="Logout" />
+							</div>
 					<?php
-					}
-
-					$user_object = new ChatUser;
-
-					$user_object->setUserId($login_user_id);
-
-					$user_data = $user_object->get_user_all_data_with_status_count();
-
+						}
 					?>
+
+
+
+					<?php
+						$user_object = new ChatUser;
+						$user_object->setUserId($login_user_id);
+						$user_data = $user_object->get_user_all_data_with_status_count();
+					?>
+
+					<!-- Display all Chat Users/Members (on the left side of the page), and their Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table) -->
 					<div class="list-group" style=" max-height: 100vh; margin-bottom: 10px; overflow-y:scroll; -webkit-overflow-scrolling: touch;">
 						<?php
-						
-						foreach($user_data as $key => $user)
-						{
-							$icon = '<i class="fa fa-circle text-danger"></i>';
-
-							if ($user['user_login_status'] == 'Login')
+							foreach($user_data as $key => $user)
 							{
-								$icon = '<i class="fa fa-circle text-success"></i>';
-							}
+								// Dispaly User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
+								$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the User 'Offline' Status
 
-							if ($user['user_id'] != $login_user_id)
-							{
-								if ($user['count_status'] > 0)
+								// If the user is authenticated/logged in (based on the `user_login_status` column of the `chat_user_table` database table, not the browser's Session), show the 'green' circle to denote the User 'Online' Status
+								if ($user['user_login_status'] == 'Login')
 								{
-									$total_unread_message = '<span class="badge badge-danger badge-pill">' . $user['count_status'] . '</span>';
-								}
-								else
-								{
-									$total_unread_message = '';
+									$icon = '<i class="fa fa-circle text-success"></i>'; // Show a 'green' circle to denote the User 'Online' Status
 								}
 
-								echo "
-								<a class='list-group-item list-group-item-action select_user' style='cursor:pointer' data-userid = '".$user['user_id']."'>
-									<img src='".$user["user_profile"]."' class='img-fluid rounded-circle img-thumbnail' width='50' />
-									<span class='ml-1'>
-										<strong>
-											<span id='list_user_name_".$user["user_id"]."'>".$user['user_name']."</span>
-											<span id='userid_".$user['user_id']."'>".$total_unread_message."</span>
-										</strong>
-									</span>
-									<span class='mt-2 float-right' id='userstatus_".$user['user_id']."'>".$icon."</span>
-								</a>
-								";
+								if ($user['user_id'] != $login_user_id)
+								{
+									if ($user['count_status'] > 0)
+									{
+										$total_unread_message = '<span class="badge badge-danger badge-pill">' . $user['count_status'] . '</span>';
+									}
+									else
+									{
+										$total_unread_message = '';
+									}
+
+									echo "
+										<a class='list-group-item list-group-item-action select_user' style='cursor:pointer' data-userid = '" . $user['user_id'] . "'>
+											<img src='" . $user["user_profile"] . "' class='img-fluid rounded-circle img-thumbnail' width='50' />
+											<span class='ml-1'>
+												<strong>
+													<span id='list_user_name_" . $user["user_id"] . "'>" . $user['user_name'] . "</span>
+													<span id='userid_" . $user['user_id'] . "'>" . $total_unread_message . "</span>
+												</strong>
+											</span>
+											<span class='mt-2 float-right' id='userstatus_" . $user['user_id']."'>" . $icon . "</span>
+										</a>
+									";
+								}
 							}
-						}
-
-
 						?>
 					</div>
 				</div>
 				
 				<div class="col-lg-9 col-md-8 col-sm-7">
 					<br />
-					<h3 class="text-center">Realtime One to One Chat App using Ratchet WebSockets with PHP Mysql - Online Offline Status - 8</h3>
+					<h3 class="text-center">Real-time One-to-One Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
 					<hr />
 					<br />
 					<div id="chat_area"></div>
