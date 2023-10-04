@@ -148,21 +148,20 @@ class PrivateChat
 		$statement->execute();
 	}
 
-	function change_chat_status()
+	function change_chat_status() // Change the message `status` from 'Unread' to 'Read'
 	{
-		$query = "
-		UPDATE chat_message 
+		$query =
+			"UPDATE chat_message 
 			SET status = 'Yes' 
 			WHERE from_user_id = :from_user_id 
 			AND to_user_id = :to_user_id 
-			AND status = 'No'
-		";
+			AND status = 'No'"
+		;
 
 		$statement = $this->connect->prepare($query);
 
 		$statement->bindParam(':from_user_id', $this->from_user_id);
-
-		$statement->bindParam(':to_user_id', $this->to_user_id);
+		$statement->bindParam(':to_user_id'  , $this->to_user_id);
 
 		$statement->execute();
 	}

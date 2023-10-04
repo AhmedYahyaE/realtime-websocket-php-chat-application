@@ -17,7 +17,7 @@ require('database/ChatRooms.php');
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Real-time One-to-One Chat Application in PHP using WebSocket Programming</title>
+		<title>Real-time One-to-One Private Chat Application in PHP using WebSocket Programming</title>
 		<!-- Bootstrap core CSS -->
 		<link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
 		<link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -89,7 +89,7 @@ require('database/ChatRooms.php');
 					?>
 							<!-- Display authenticated/logged-in user profile data (on the left side of the page) -->
 							<input type="hidden" name="login_user_id" id="login_user_id" value="<?php echo $login_user_id; ?>" />
-							<input type="hidden" name="is_active_chat" id="is_active_chat" value="No" />
+							<input type="hidden" name="is_active_chat" id="is_active_chat" value="No" /> <!-- This is used to control opening/closing of the private chat area (using JavaScript) when a user from the Users List (on the left side of the page) is clicked on to chat with -->
 
 							<div class="mt-3 mb-3 text-center">
 								<div>
@@ -120,7 +120,8 @@ require('database/ChatRooms.php');
 						<?php
 							foreach ($user_data as $key => $user)
 							{
-								// Dispaly User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
+								// Dispaly User Online/Offline Status (here with the 'One-to-One/Private Chat case) (based on the onOpen() and onClose of the custom WebSocket handler Chat.php Class)
+								// Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
 								$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the User 'Offline' Status
 
 								// If the user is authenticated/logged in (based on the `user_login_status` column of the `chat_user_table` database table, not the browser's Session), show the 'green' circle to denote the User 'Online' Status
@@ -145,6 +146,8 @@ require('database/ChatRooms.php');
 
 									//  Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
 
+									// The 'select_user' CSS class is used by JavaScript down below
+									// The data-* Custom HTML Data Attribute 'data-userid' is used by JavaScript down below
 									echo "
 										<a class='list-group-item list-group-item-action select_user' style='cursor:pointer' data-userid = '" . $user['user_id'] . "'>
 											<img src='" . $user["user_profile"] . "' class='img-fluid rounded-circle img-thumbnail' width='50' />
@@ -165,10 +168,10 @@ require('database/ChatRooms.php');
 				
 				<div class="col-lg-9 col-md-8 col-sm-7">
 					<br />
-					<h3 class="text-center">Real-time One-to-One Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
+					<h3 class="text-center">Real-time One-to-One Private Chat Application using Ratchet WebSocket with PHP & MySQL - Online/Offline Status</h3>
 					<hr />
 					<br />
-					<div id="chat_area"></div>
+					<div id="chat_area"></div> <!-- We'll use JavaScript down below to load 'One-to-One/Private' Chat Area with every single chat user (when a targeted user is clicked on the left side of the page) -->
 				</div>
 				
 			</div>
@@ -180,7 +183,7 @@ require('database/ChatRooms.php');
 
 
 
-			var receiver_userid = '';
+			var receiver_userid = ''; // The user that the authenticated/logged-in user clicked on (from the Users List) to send them (he/she) a 'private' chat message
 
 
 			// Handling the client side part (browser) of the WebSocket connection (using JavaScript)
@@ -203,10 +206,11 @@ require('database/ChatRooms.php');
 
 
 			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This also includes the message SENT by the current message sender too i.e. When a user sends a message, THEY (the sender) receive this message again (his/her message) through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
+			// Important Note: This    conn.onmessage    isn't triggered only by receiving data from the onMessage() method of the custom WebSocket handler Chat.php class, but also by receiving data from the onOpen() and onClode() methods of Chat.php Class as they contain    $client->send(json_encode($data));    line of code which sends the 'user_id_status' and 'status_type' to all 'One-to-One'/Private' Chat users/clients in order to display Users and their User Online/Offline Status. To check those data, type in    console.log(event);    and    console.log(event.data);
 			// Note: This    conn.onmessage    function receives all messages from our custom WebSocket handler Chat.php class
+			// Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
 			conn.onmessage = function(event)
 			{
-				// Important Note: This    conn.onmessage    isn't triggered only by receiving data from the onMessage() method of the custom WebSocket handler Chat.php class, but also by receiving data from the onOpen() and onClode() method of Chat.php Class as they contain    $client->send(json_encode($data));    line of code which sends the 'user_id_status' and 'status_type' to all 'One-to-One'/Private' Chat users/clients in order to display Users and their Online/Offline Status. To check those data, type in    console.log(event);    amd    console.log(event.data);
 				console.log(event);
 				console.log(event.data); // Display the received data (through a WebSocket) i.e. chat message
 
@@ -216,11 +220,12 @@ require('database/ChatRooms.php');
 
 
 				// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
-				if (data.status_type == 'Online')
+				// Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
+				if (data.status_type == 'Online') // Depending on the $data variable sent from the onOpen() method of Chat.php Class
 				{
 					$('#userstatus_'+data.user_id_status).html('<i class="fa fa-circle text-success"></i>');
 				}
-				else if (data.status_type == 'Offline')
+				else if (data.status_type == 'Offline') // Depending on the $data variable sent from the onClose() method of Chat.php Class
 				{
 					$('#userstatus_' + data.user_id_status).html('<i class="fa fa-circle text-danger"></i>');
 				}
@@ -302,14 +307,14 @@ require('database/ChatRooms.php');
 
 
 
-			function make_chat_area(user_name)
+			function make_chat_area(user_name) // When a user is clicked on to chat with (on the left side in the Private Chat)    // user_name    function parameter is the user name of the clicked user (receiver)
 			{
 				var html = `
 					<div class="card">
 						<div class="card-header">
 							<div class="row">
 								<div class="col col-sm-6">
-									<b>Chat with <span class="text-danger" id="chat_user_name">`+user_name+`</span></b>
+									<b>Private Chat with: <span class="text-danger" id="chat_user_name">${user_name}</span></b>
 								</div>
 								<div class="col col-sm-6 text-right">
 									<a href="chatroom.php" class="btn btn-success btn-sm">Go to Group Chat</a>&nbsp;&nbsp;&nbsp;
@@ -319,11 +324,13 @@ require('database/ChatRooms.php');
 								</div>
 							</div>
 						</div>
-						<div class="card-body" id="messages_area">
+						<div class="card-body" id="messages_area"> <!-- This is the Chat History area with the selected user -->
 
 						</div>
 					</div>
 
+
+					<!-- Start of Private Chat HTML Form -->
 					<form id="chat_form" method="POST" data-parsley-errors-container="#validation_error">
 						<div class="input-group mb-3" style="height:7vh">
 							<textarea class="form-control" id="chat_message" name="chat_message" placeholder="Type Message Here" data-parsley-maxlength="1000" data-parsley-pattern="/^[a-zA-Z0-9\\s\?]+$/" required></textarea>
@@ -331,38 +338,41 @@ require('database/ChatRooms.php');
 								<button type="submit" name="send" id="send" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
 							</div>
 						</div>
+
+						<!-- Display Parsley Validation Errors -->
 						<div id="validation_error"></div>
 						<br />
 					</form>
+					<!-- Start of Private Chat HTML Form -->
 				`;
 
-				$('#chat_area').html(html);
 
-				$('#chat_form').parsley();
+				$('#chat_area').html(html); // Set the HTML contents of every matched element
+				$('#chat_form').parsley(); // Validate Private Chat HTML Form with Parsley JavaScript library
 			}
 
-
-
+			// When the authenticated/logged-in user clicks on a user from the left side Users List to send them (he/she) a chat message
 			$(document).on('click', '.select_user', function(){
+				receiver_userid  = $(this).data('userid');    // Get the selected user's               `user_id` from `chat_user_table` table (the message receiver)
+				var from_user_id = $('#login_user_id').val(); // Get the autheticated/logged-in user's `user_id` from `chat_user_table` table (the message sender  )
+				var receiver_user_name = $('#list_user_name_' + receiver_userid).text(); // Get the selected user's name
 
-				receiver_userid = $(this).data('userid');
+				$('.select_user.active').removeClass('active'); // Remove the .active CSS class from any other previously selected user (to add it on the newly selected user)
+				$(this).addClass('active'); // Add the .active CSS on the newly selected user
 
-				var from_user_id = $('#login_user_id').val();
+				make_chat_area(receiver_user_name); // Show the chat area with the selected user
+				$('#is_active_chat').val('Yes'); // Change the private chat area with a user from 'No' to 'Yes' to be used for different purposes
 
-				var receiver_user_name = $('#list_user_name_'+receiver_userid).text();
 
-				$('.select_user.active').removeClass('active');
-
-				$(this).addClass('active');
-
-				make_chat_area(receiver_user_name);
-
-				$('#is_active_chat').val('Yes');
-
+				// Fetch the private Chat History with the selected user from the `chat_message` database table using AJAX
 				$.ajax({
-					url:"action.php",
-					method:"POST",
-					data:{action:'fetch_chat', to_user_id:receiver_userid, from_user_id:from_user_id},
+					url     :"action.php",
+					method  :"POST",
+					data    :{
+						action      :'fetch_chat',
+						to_user_id  : receiver_userid,
+						from_user_id: from_user_id
+					},
 					dataType:"JSON",
 					success:function(data)
 					{
@@ -419,16 +429,18 @@ require('database/ChatRooms.php');
 
 
 
+			// Close the private chat area with a user when clicking on the x button (on the far right side of the private chat area)
 			$(document).on('click', '#close_chat_area', function(){
-				$('#chat_area').html('');
-				$('.select_user.active').removeClass('active');
-				$('#is_active_chat').val('No');
+				$('#chat_area').html(''); // Remove the contents of the Private Chat area
+				$('.select_user.active').removeClass('active'); // Remove the .active CSS class
+				$('#is_active_chat').val('No'); // Convert the value from 'Yes' to 'No'
 
-				receiver_userid = '';
+				receiver_userid = ''; // Empty the receiver user's variable
 			});
 
 
 
+			// Handling 'One-to-One/Private' Chat HTML Form Submission (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
 			$(document).on('submit', '#chat_form', function(event){
 				event.preventDefault();
 

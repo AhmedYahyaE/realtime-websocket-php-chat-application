@@ -85,7 +85,7 @@ $user_data = $user_object->get_user_all_data();
 	<body>
 		<div class="container">
 			<br />
-			<h3 class="text-center">Real-time Group Chat Application using Ratchet WebSocket with PHP MySQL - Online/Offline Status</h3>
+			<h3 class="text-center">Real-time Group Chat Application using Ratchet WebSocket with PHP & MySQL - Online/Offline Status</h3>
 			<br />
 			<div class="row">
 
@@ -97,7 +97,7 @@ $user_data = $user_object->get_user_all_data();
 						<div class="card-header">
 							<div class="row">
 								<div class="col col-sm-6">
-									<h3>Chat Room</h3>
+									<h3>Group Chat Room</h3>
 								</div>
 								<div class="col col-sm-6 text-right">
 									<a href="privatechat.php" class="btn btn-success btn-sm">Go to Private Chat</a>
@@ -197,6 +197,7 @@ $user_data = $user_object->get_user_all_data();
 											$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the User 'Offline' Status
 
 											// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
+									        // Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
 											// If the user is authenticated/logged in (based on the `user_login_status` column of the `chat_user_table` database table, not the browser's Session), show the 'green' circle to denote the User 'Online' Status
 											if ($user['user_login_status'] == 'Login')
 											{
@@ -241,6 +242,7 @@ $user_data = $user_object->get_user_all_data();
 
 
 			// Triggered when a WebSocket Connection is opnend    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/open_event
+			// Important Note: This    conn.onmessage    isn't triggered only by receiving data from the onMessage() method of the custom WebSocket handler Chat.php class, but also by receiving data from the onOpen() and onClode() methods of Chat.php Class as they contain    $client->send(json_encode($data));    line of code which sends the 'user_id_status' and 'status_type' to all 'One-to-One'/Private' Chat users/clients in order to display Users and their User Online/Offline Status. To check those data, type in    console.log(event);    and    console.log(event.data);
 			conn.onopen = function(e) {
 				// console.log(e);
 				console.log("Connection established! (Group Chat)");
@@ -250,6 +252,7 @@ $user_data = $user_object->get_user_all_data();
 
 			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This also includes the message SENT by the current message sender too i.e. When a user sends a message, THEY (the sender) receive this message again (his/her message) through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
 			// Note: This    conn.onmessage    function receives all messages from our custom WebSocket handler Chat.php class
+			// Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
 			conn.onmessage = function(e) {
 				// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
 
@@ -326,7 +329,7 @@ $user_data = $user_object->get_user_all_data();
 
 
 
-			// Handling Chat HTML Form Submission (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
+			// Handling 'Group' Chat HTML Form Submission (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
 			$('#chat_form').on('submit', function(event) { // When the Chat HTML Form is submitted
 				event.preventDefault(); // Prevent actual HTML Form submission to avoid page refresh which can ruin user experience (i.e. Prevent form submission by HTML. JavaScript will handle form submission.)
 
