@@ -1,5 +1,6 @@
 <?php
 // This file is responsible for 'One-to-One' Chat ('Private' Chat). Check chatroom.php for Group Chat
+// Note: Fetching Chat History: With 'Group' Chat, we readily displayed the Chat History in chatroom.php from the `chatrooms` database table, but with 'One-to-One/Private' Chat, we displayed (fetched) the Chat History with the authenticated/logged-in user with every user through an AJAX Request to action.php.
 
 
 session_start();
@@ -154,7 +155,7 @@ require('database/ChatRooms.php');
 											<span class='ml-1'>
 												<strong>
 													<span id='list_user_name_" . $user["user_id"] . "'>" . $user['user_name'] . "</span>
-													<span id='userid_" . $user['user_id'] . "'>" . $total_unread_message . "</span>
+													<span id='userid_" . $user['user_id'] . "'>" . $total_unread_message . "</span> <!-- Show the 'Unread' messages count red-colored Notification -->
 												</strong>
 											</span>
 											<span class='mt-2 float-right' id='userstatus_" . $user['user_id'] . "'>" . $icon . "</span>
@@ -211,8 +212,8 @@ require('database/ChatRooms.php');
 			// Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
 			conn.onmessage = function(event)
 			{
-				console.log(event);
-				console.log(event.data); // Display the received data (through a WebSocket) i.e. chat message
+				// console.log(event);
+				// console.log(event.data); // Display the received data (through a WebSocket) i.e. chat message
 
 
 				var data = JSON.parse(event.data);
@@ -223,7 +224,7 @@ require('database/ChatRooms.php');
 				// Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
 				if (data.status_type == 'Online') // Depending on the $data variable sent from the onOpen() method of Chat.php Class
 				{
-					$('#userstatus_'+data.user_id_status).html('<i class="fa fa-circle text-success"></i>');
+					$('#userstatus_' + data.user_id_status).html('<i class="fa fa-circle text-success"></i>');
 				}
 				else if (data.status_type == 'Offline') // Depending on the $data variable sent from the onClose() method of Chat.php Class
 				{
@@ -260,31 +261,31 @@ require('database/ChatRooms.php');
 
 					if (receiver_userid == data.userId || data.from == 'Me')
 					{
-						if ($('#is_active_chat').val() == 'Yes')
+						if ($('#is_active_chat').val() == 'Yes') // If the Private Chat Area is opened (with any user)
 						{
 							var html_data = `
-							<div class="`+row_class+`">
-								<div class="col-sm-10">
-									<div class="shadow-sm alert `+background_class+`">
-										<b>`+data.from+` - </b>`+data.msg+`<br />
-										<div class="text-right">
-											<small><i>`+data.datetime+`</i></small>
+								<div class="${row_class}">
+									<div class="col-sm-10">
+										<div class="shadow-sm alert ${background_class}">
+											<b>${data.from} - </b>${data.msg}<br />
+											<div class="text-right">
+												<small>
+													<i>${data.datetime}</i>
+												</small>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
 							`;
 
 							$('#messages_area').append(html_data);
-
 							$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight);
-
 							$('#chat_message').val("");
 						}
 					}
 					else
 					{
-						var count_chat = $('#userid'+data.userId).text();
+						var count_chat = $('#userid' + data.userId).text();
 
 						if (count_chat == '')
 						{
@@ -293,7 +294,7 @@ require('database/ChatRooms.php');
 
 						count_chat++;
 
-						$('#userid_'+data.userId).html('<span class="badge badge-danger badge-pill">'+count_chat+'</span>');
+						$('#userid_' + data.userId).html('<span class="badge badge-danger badge-pill">' + count_chat + '</span>'); // Show the 'Unread' messages count/number red-colored Notification
 					}
 				}
 			};
@@ -302,7 +303,7 @@ require('database/ChatRooms.php');
 
 			conn.onclose = function(event) // Fired when a connection with a WebSocket is closed    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close_event
 			{
-				console.log('connection close');
+				console.log('Connection Closed!');
 			};
 
 
@@ -351,7 +352,7 @@ require('database/ChatRooms.php');
 				$('#chat_form').parsley(); // Validate Private Chat HTML Form with Parsley JavaScript library
 			}
 
-			// When the authenticated/logged-in user clicks on a user from the left side Users List to send them (he/she) a chat message
+			// When the authenticated/logged-in user clicks on a user from the left side Users List to send them (he/she) a chat message, show/display the private chat area, fetch the Chat History with that user through an AJAX request, and remove the 'Unread' messages count/number red-colored Notification
 			$(document).on('click', '.select_user', function(){
 				receiver_userid  = $(this).data('userid');    // Get the selected user's               `user_id` from `chat_user_table` table (the message receiver)
 				var from_user_id = $('#login_user_id').val(); // Get the autheticated/logged-in user's `user_id` from `chat_user_table` table (the message sender  )
@@ -364,53 +365,54 @@ require('database/ChatRooms.php');
 				$('#is_active_chat').val('Yes'); // Change the private chat area with a user from 'No' to 'Yes' to be used for different purposes
 
 
-				// Fetch the private Chat History with the selected user from the `chat_message` database table using AJAX
+				// Fetch the private Chat History of the authenticated/logged-in user with the selected user from the `chat_message` database table using AJAX
 				$.ajax({
 					url     :"action.php",
 					method  :"POST",
 					data    :{
 						action      :'fetch_chat',
-						to_user_id  : receiver_userid,
-						from_user_id: from_user_id
+						to_user_id  : receiver_userid, // The selected user (by the authenticated/logged-user) i.e. the receiver
+						from_user_id: from_user_id     // The authenticated/logged-in user i.e. the sender
 					},
 					dataType:"JSON",
-					success:function(data)
+					success:function(data) // 'data' is the response (Chat History between the two users) from the server/server side/backend (action.php)
 					{
-						if (data.length > 0)
+						// console.log(data); // JavaScript Array
+						// console.log(JSON.stringify(data)); // JavaScript Object
+
+
+						if (data.length > 0) // If there's a chat history between the authenticated/logged-in user and the selected user
 						{
 							var html_data = '';
 
-							for(var count = 0; count < data.length; count++)
+							for (var count = 0; count < data.length; count++)
 							{
-								var row_class= ''; 
+								var row_class        = ''; 
 								var background_class = '';
-								var user_name = '';
+								var user_name        = '';
 
-								if (data[count].from_user_id == from_user_id)
+								if (data[count].from_user_id == from_user_id) // If the Chat History message is sent by the authenticated/logged-in user to the selected user, show it on the left side of the chat area
 								{
-									row_class = 'row justify-content-start';
-
+									row_class        = 'row justify-content-start';
 									background_class = 'alert-primary';
-
-									user_name = 'Me';
+									user_name        = 'Me';
 								}
-								else
+								else // If the Chat History essage is sent by the selected user to the authenticated/logged-in user, show it on the right side of the chat area
 								{
 									row_class = 'row justify-content-end';
-
 									background_class = 'alert-success';
-
 									user_name = data[count].from_user_name;
 								}
 
+								// Display/Show the Chat History message's sender name, message itself, its timestamp, and some CSS classes
 								html_data += `
-									<div class="`+row_class+`">
+									<div class="${row_class}">
 										<div class="col-sm-10">
-											<div class="shadow alert `+background_class+`">
-												<b>`+user_name+` - </b>
-												`+data[count].chat_message+`<br />
+											<div class="shadow alert ${background_class}">
+												<b>${user_name} - </b>
+												${data[count].chat_message}<br />
 												<div class="text-right">
-													<small><i>`+data[count].timestamp+`</i></small>
+													<small><i>${data[count].timestamp}</i></small>
 												</div>
 											</div>
 										</div>
@@ -418,9 +420,9 @@ require('database/ChatRooms.php');
 								`;
 							}
 
-							$('#userid_'+receiver_userid).html('');
-							$('#messages_area').html(html_data);
-							$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight);
+							$('#userid_' + receiver_userid).html(''); // Remove the 'Unread' messages count/number red-colored Notification (because the message has been opened (seen) then)
+							$('#messages_area').html(html_data); // Display/Show the Chat History messages between the authenticated/logged-in user and the selected user
+							$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the private chat area to show latest messages (after displaying/showing the History Chat message/s)
 						}
 					}
 				})

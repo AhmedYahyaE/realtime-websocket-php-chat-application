@@ -1,5 +1,6 @@
 <?php 
 // This file is responsible for 'Group' Chat. Check privatechat.php for One-to-One Chat (Private Chat)
+// Note: Fetching Chat History: With 'Group' Chat, we readily displayed the Chat History in chatroom.php from the `chatrooms` database table, but with 'One-to-One/Private' Chat, we displayed (fetched) the Chat History with the authenticated/logged-in user with every user through an AJAX Request to action.php.
 
 
 session_start();
@@ -325,7 +326,7 @@ $user_data = $user_object->get_user_all_data();
 
 			// console.log($('#messages_area')); // The jQuery wrapper
 			// console.log($('#messages_area')[0]); // The <div> DOM element itself
-			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area to show latest messages (after the web page has loaded)
+			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the 'Group' chat area to show latest messages (after the web page has loaded)
 
 
 
@@ -343,7 +344,7 @@ $user_data = $user_object->get_user_all_data();
 					};
 
 					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend (to the onMessage() method of the Chat.php class))    // Convert the JavaScript Object to a JSON string (to send it to the server (our custom WebSocket handler Chat.php class))
-					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the chat area to show latest messages (after submitting the Chat HTML Form i.e. after sending the chat message)
+					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the 'Group' chat area to show latest messages (after submitting the Chat HTML Form i.e. after sending the chat message)
 				}
 			});
 
@@ -357,7 +358,7 @@ $user_data = $user_object->get_user_all_data();
 					url   : "action.php",
 					method: "POST",
 					data  : {user_id:user_id, action:'leave'},
-					success:function(data) // 'data' is the response from the server (server-side/backend). It contains the 'status' key. Check the first if condition in action.php
+					success:function(data) // 'data' is the response from the server (server-side/backend) (action.php). It contains the 'status' key. Check the first if condition in action.php
 					{
 						var response = JSON.parse(data);
 

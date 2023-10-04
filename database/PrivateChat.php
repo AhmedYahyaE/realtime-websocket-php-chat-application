@@ -13,15 +13,18 @@ class PrivateChat
 	private $status; // 'Yes' or 'No' which denotes a message is either 'Read' or 'Unread'
 	protected $connect;
 
+
+
 	public function __construct()
 	{
+		// Establish the database connection
 		require_once('Database_connection.php');
-
 		$db = new Database_connection();
-
 		$this->connect = $db->connect();
 	}
 
+
+	// Setters and Getters
 	function setChatMessageId($chat_message_id)
 	{
 		$this->chat_message_id = $chat_message_id;
@@ -82,24 +85,26 @@ class PrivateChat
 		return $this->status;
 	}
 
-	function get_all_chat_data()
-	{
-		$query = "
-		SELECT a.user_name as from_user_name, b.user_name as to_user_name, chat_message, timestamp, status, to_user_id, from_user_id  
-			FROM chat_message 
-		INNER JOIN chat_user_table a 
-			ON chat_message.from_user_id = a.user_id 
-		INNER JOIN chat_user_table b 
-			ON chat_message.to_user_id = b.user_id 
-		WHERE (chat_message.from_user_id = :from_user_id AND chat_message.to_user_id = :to_user_id) 
-		OR (chat_message.from_user_id = :to_user_id AND chat_message.to_user_id = :from_user_id)
-		";
+	function get_all_chat_data() // Get the Private Chat History between two users from `chat_message` table
+	{ // WHERE there is a chat history message between the two users i.e. the sender sends to the receiver or the receiver sends to the sender
+		$query =
+			"SELECT
+				a.user_name as from_user_name, b.user_name as to_user_name, chat_message, timestamp, status, to_user_id, from_user_id  
+			FROM chat_message
+			INNER JOIN chat_user_table a
+				ON chat_message.from_user_id = a.user_id
+			INNER JOIN chat_user_table b
+				ON chat_message.to_user_id = b.user_id
+			WHERE
+				(chat_message.from_user_id = :from_user_id AND chat_message.to_user_id = :to_user_id)
+			OR
+				(chat_message.from_user_id = :to_user_id   AND chat_message.to_user_id = :from_user_id)"
+		;
 
 		$statement = $this->connect->prepare($query);
 
 		$statement->bindParam(':from_user_id', $this->from_user_id);
-
-		$statement->bindParam(':to_user_id', $this->to_user_id);
+		$statement->bindParam(':to_user_id'	 , $this->to_user_id);
 
 		$statement->execute();
 

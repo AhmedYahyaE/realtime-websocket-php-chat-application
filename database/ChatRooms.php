@@ -12,6 +12,17 @@ class ChatRooms
 	private $created_on;
 	protected $connect;
 
+
+
+	public function __construct()
+	{
+		// Establish the database connection
+		require_once("Database_connection.php");
+		$database_object = new Database_connection;
+		$this->connect = $database_object->connect();
+	}
+
+
 	// Setters and Getters
 	public function setChatId($chat_id)
 	{
@@ -51,14 +62,6 @@ class ChatRooms
 	function getCreatedOn()
 	{
 		return $this->created_on;
-	}
-
-	public function __construct()
-	{
-		// Establish the database connection
-		require_once("Database_connection.php");
-		$database_object = new Database_connection;
-		$this->connect = $database_object->connect();
 	}
 
 	function save_chat()

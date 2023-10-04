@@ -2,7 +2,7 @@
 
 session_start();
 
-// Logout script: (AJAX Request from chatroom.php and privatechat.php) If the Logout button has been clicked in chatroom.php and privatechat.php, and the HTTP Request has been sent/done via AJAX
+// Logout script: (AJAX Request from chatroom.php and privatechat.php): If the Logout button has been clicked in chatroom.php and privatechat.php, and the HTTP Request has been sent/done via AJAX
 if (isset($_POST['action']) && $_POST['action'] == 'leave')
 {
 	require('database/ChatUser.php');
@@ -32,9 +32,9 @@ if (isset($_POST["action"]) && $_POST["action"] == 'fetch_chat')
 
 	$private_chat_object = new PrivateChat;
 
-	$private_chat_object->setFromUserId($_POST["to_user_id"]);
-	$private_chat_object->setToUserId($_POST["from_user_id"]);
-	$private_chat_object->change_chat_status();
+	$private_chat_object->setFromUserId($_POST["to_user_id"]); // The selected user's ID `to_user_id` in `chat_message` table (by the authenticated/logged-user) i.e. the receiver
+	$private_chat_object->setToUserId($_POST["from_user_id"]); // The authenticated/logged-in user's ID `from_user_id` in `chat_message` table i.e the sender
+	$private_chat_object->change_chat_status(); // Convert the chat message `status` in `chat_message` table from 'Unread' to 'Read'
 
 	echo json_encode($private_chat_object->get_all_chat_data());
 }
