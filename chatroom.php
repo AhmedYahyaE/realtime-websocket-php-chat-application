@@ -1,5 +1,5 @@
 <?php 
-// This file is for Group Chat. Check privatechat.php for One-to-One Chat (Private Chat)
+// This file is responsible for 'Group' Chat. Check privatechat.php for One-to-One Chat (Private Chat)
 
 
 session_start();
@@ -146,7 +146,7 @@ $user_data = $user_object->get_user_all_data();
 					<!-- Chat HTML Form -->
 					<form method="post" id="chat_form" data-parsley-errors-container="#validation_error"> <!-- This Chat HTML Form submission is handled by JavaScript down below at the bottom of this file -->
 						<div class="input-group mb-3">
-							<textarea class="form-control" id="chat_message" name="chat_message" placeholder="Type Message Here" data-parsley-maxlength="1000" data-parsley-pattern="/^[a-zA-Z0-9\s]+$/" required></textarea>
+							<textarea class="form-control" id="chat_message" name="chat_message" placeholder="Type Message Here" data-parsley-maxlength="1000" data-parsley-pattern="/^[a-zA-Z0-9\s\?]+$/" required></textarea>
 							<div class="input-group-append">
 								<button type="submit" name="send" id="send" class="btn btn-primary"><i class="fa fa-paper-plane"></i></button>
 							</div>
@@ -196,6 +196,7 @@ $user_data = $user_object->get_user_all_data();
 											// Dispaly User Online/Offline Status (based on the `user_login_status` column of the `chat_user_table` database table)
 											$icon = '<i class="fa fa-circle text-danger"></i>'; // Show a 'red' circle to denote the User 'Offline' Status
 
+											// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
 											// If the user is authenticated/logged in (based on the `user_login_status` column of the `chat_user_table` database table, not the browser's Session), show the 'green' circle to denote the User 'Online' Status
 											if ($user['user_login_status'] == 'Login')
 											{
@@ -226,39 +227,49 @@ $user_data = $user_object->get_user_all_data();
 	</body>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			// 'GROUP' CHAT
+
+
+
 			// Handling the client side part (browser) of the WebSocket connection (using JavaScript)
 			// This code is copied from: http://socketo.me/docs/hello-world#next_steps:~:text=Run%20the%20shell%20script%20again%2C%20open%20a%20couple%20of%20web%20browser%20windows%2C%20and%20open%20a%20Javascript%20console%20or%20a%20page%20with%20the%20following%20Javascript%3A
 			// You can find the WebSocket object/class (a Browser Web API) documentation on: The WebSocket Browser Web API: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API    and    The WebSocket object: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
-			var conn = new WebSocket('ws://localhost:8080'); // Create the Browser Web API WebSocket object i.e. Start the WebSocket connection!    // Initiate/Start the WebSocket connection in the browser. Check the browser's console.
+			// Start the WebSocket connection from the client side
+			var conn = new WebSocket('ws://localhost:8080'); // Create the Browser Web API WebSocket object i.e. Start the WebSocket connection!    // Initiate/Start the WebSocket connection in the browser. Check the browser's console.    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket
 			console.log(conn);
 
 
 
 			// Triggered when a WebSocket Connection is opnend    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/open_event
 			conn.onopen = function(e) {
-				console.log("Connection established!");
+				// console.log(e);
+				console.log("Connection established! (Group Chat)");
 			};
 
 
 
-			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This includes the message sent by the current sender i.e. When a user sends a message, THEY (the sender) receive it again through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
+			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This also includes the message SENT by the current message sender too i.e. When a user sends a message, THEY (the sender) receive this message again (his/her message) through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
 			// Note: This    conn.onmessage    function receives all messages from our custom WebSocket handler Chat.php class
-			conn.onmessage = function(e) { // When a chat message is sent or received, display it in the chat area
+			conn.onmessage = function(e) {
+				// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
+
+
+
 				// console.log(e);
-				// console.log(e.data); // Display the sent or received chat message
+				// console.log(e.data); // Display the received chat message through WebSocket
 
 
-				var data = JSON.parse(e.data); // Convert the chat message (whether sent or received) from a JSON string to a JavaScript Object
+				var data = JSON.parse(e.data); // Convert the received chat message from a JSON string to a JavaScript Object
 				console.log(data); // Log the chat message (whether sent or received)
 				// Note: 'Me' and 'dt' (date) are sent from the backend from the Chat.php class
 
-				var row_class = '';
+				var row_class 		 = '';
 				var background_class = '';
 
 				// If the user is the original sender of the message i.e. If the chat message is 'sent' i.e. If the chat message is sent by the current user (i.e. the user that is currently using the browser window i.e. 'Me'), make the chat message on the left side, and also play that specific notification audio
 				if (data.from == 'Me') // Note: 'Me' and 'dt' (date) are sent from the backend from the Chat.php class
 				{
-					row_class = 'row justify-content-start';
+					row_class        = 'row justify-content-start';
 					background_class = 'text-dark alert-light';
 
 					// Play this specific notification sound when a chat message is 'sent'    // https://dev.to/shantanu_jana/how-to-play-sound-on-button-click-in-javascript-3m48
@@ -266,7 +277,7 @@ $user_data = $user_object->get_user_all_data();
 				}
 				else // If the user is not the sender of the message (they're just a receiver) i.e. If the chat message is 'received' i.e. If the chat message is sent by another user (i.e. the chat message is received from another user i.e. the chat message is sent by a user other than the current user who is currently using the browser window), make the received chat message on the right side and give it a green color (using the Bootstrap 'alert-success' CSS class), and also play that OTHER specific notification audio
 				{
-					row_class = 'row justify-content-end';
+					row_class 	     = 'row justify-content-end';
 					background_class = 'alert-success';
 
 					// Play this specific notification sound when a chat message is 'received'    // https://dev.to/shantanu_jana/how-to-play-sound-on-button-click-in-javascript-3m48
@@ -323,9 +334,9 @@ $user_data = $user_object->get_user_all_data();
 				{
 					var user_id = $('#login_user_id').val();
 					var message = $('#chat_message').val(); // The chat message written by a user in the assigned chat <textarea>
-					var data    = {
-						userId: user_id,
-						msg   : message
+					var data    = { // Those data (i.e. 'userId' and 'msg') are sent to the onMessage() method of the custom WebSocket handler Chat.php Class)
+						userId: user_id, // Can be accessed inside the onMessage() method of Chat.php Class through    $from->resourceId
+						msg   : message  // Can be accessed inside the onMessage() method of Chat.php Class through    $msg
 					};
 
 					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend (to the onMessage() method of the Chat.php class))    // Convert the JavaScript Object to a JSON string (to send it to the server (our custom WebSocket handler Chat.php class))
@@ -334,7 +345,7 @@ $user_data = $user_object->get_user_all_data();
 			});
 
 
-			
+
 			// Logout (When the Logout button is clicked (the button is in this file)) (N.B. This changes the `user_login_status` column of the `chat_user_table` database table from 'Login' to 'Logout')
 			$('#logout').click(function(){
 				user_id = $('#login_user_id').val();
@@ -343,18 +354,17 @@ $user_data = $user_object->get_user_all_data();
 					url   : "action.php",
 					method: "POST",
 					data  : {user_id:user_id, action:'leave'},
-					success:function(data) // 'data' is the response from the server. It contains the 'status' key. Check the first if condition in action.php
+					success:function(data) // 'data' is the response from the server (server-side/backend). It contains the 'status' key. Check the first if condition in action.php
 					{
 						var response = JSON.parse(data);
 
-						if (response.status == 1) // 'data' is the response from the server. It contains the 'status' key. Check the first if condition in action.php
+						if (response.status == 1) // 'data' is the response from the server (server-side/backend). It contains the 'status' key. Check the first if condition in action.php
 						{
 							conn.close(); // Closes the WebSocket connection    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
-							location = 'index.php'; // Redirect the user to the Login Page (index.php)
+							location = 'index.php'; // Redirect the user to the Login Page (index.php) after logging out
 						}
 					}
 				})
-
 			});
 		});
 	</script>

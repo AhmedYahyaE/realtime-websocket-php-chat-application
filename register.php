@@ -108,14 +108,13 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <title>Register | Real-time PHP Chat Application using WebSocket</title>
+        <title>Register | Real-time One-to-One & Group Chat Application using WebSocket</title>
 
         <!-- Bootstrap core CSS -->
         <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
-
         <link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-
         <link rel="stylesheet" type="text/css" href="vendor-front/parsley/parsley.css"/>
+        <link rel="icon" type="image/x-icon" href="vendor-front/bubble-chat.png"> <!-- HTML Favicon -->
 
         <!-- Bootstrap core JavaScript -->
         <script src="vendor-front/jquery/jquery.min.js"></script>

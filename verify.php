@@ -22,7 +22,7 @@ if (isset($_GET['code'])) // Which is coming from the <a> HTML element
 
         if ($user_object->enable_user_account())
         {
-            $_SESSION['success_message'] = 'Your Email Successfully verified. Now you can login into this chat Application.';
+            $_SESSION['success_message'] = 'Your Email Successfully verified. Now you can login into this Chat Application.';
 
             header('location:index.php');
         }
@@ -53,6 +53,7 @@ if (isset($_GET['code'])) // Which is coming from the <a> HTML element
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="vendor-front/bubble-chat.png"> <!-- HTML Favicon -->
 
     <!-- Bootstrap core JavaScript -->
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
@@ -66,7 +67,7 @@ if (isset($_GET['code'])) // Which is coming from the <a> HTML element
     <div class="containter">
         <br />
         <br />
-        <h1 class="text-center">PHP Chat Application using Websocket</h1>
+        <h1 class="text-center">PHP Chat Application using WebSocket</h1>
         
         <div class="row justify-content-md-center">
             <div class="col col-md-4 mt-5">

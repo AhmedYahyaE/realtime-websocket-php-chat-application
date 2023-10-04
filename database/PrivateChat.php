@@ -1,4 +1,7 @@
 <?php
+// This class (a Private Chat Message Model (of the `chat_message` table)) is used to store Private Chat messages in the `chat_message` database table
+
+
 
 class PrivateChat
 {
@@ -7,7 +10,7 @@ class PrivateChat
 	private $from_user_id;
 	private $chat_message;
 	private $timestamp;
-	private $status;
+	private $status; // 'Yes' or 'No' which denotes a message is either 'Read' or 'Unread'
 	protected $connect;
 
 	public function __construct()

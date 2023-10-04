@@ -1,5 +1,5 @@
 <?php 
-// This class (a Chat Room Message Model) is used to store the chat messages in the `chatrooms` database table (to display the Chat History)
+// This class (a Public Chat Room Message Model) is used to store the chat messages in the `chatrooms` database table (to display the Chat History)
 
 
 

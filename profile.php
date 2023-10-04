@@ -1,27 +1,30 @@
 <?php 
 // Profile Page
 
+
 session_start();
 
-if (!isset($_SESSION['user_data'])) // If the user is unauthenticated/logged-out, redirect to the login page
+if (!isset($_SESSION['user_data'])) // If the user is unauthenticated/logged-out, redirect them to the login page
 {
     header('location:index.php'); // Redirect the user to the login page
 }
 
+
 require('database/ChatUser.php');
 
-$user_object = new ChatUser;
 
+$user_object = new ChatUser;
 $user_id = '';
 
+// Get the user ID from the Session
 foreach ($_SESSION['user_data'] as $key => $value)
 {
     $user_id = $value['id'];
 }
 
 $user_object->setUserId($user_id);
-
 $user_data = $user_object->get_user_data_by_id();
+
 
 $message = '';
 
@@ -53,11 +56,12 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Real-time Chat application in PHP using WebSocket Ratchet Library</title>
+	<title>Real-time Chat Application in PHP using WebSocket Ratchet Library</title>
 	<!-- Bootstrap core CSS -->
     <link href="vendor-front/bootstrap/bootstrap.min.css" rel="stylesheet">
     <link href="vendor-front/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="vendor-front/parsley/parsley.css"/>
+    <link rel="icon" type="image/x-icon" href="vendor-front/bubble-chat.png"> <!-- HTML Favicon -->
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor-front/jquery/jquery.min.js"></script>
