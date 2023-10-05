@@ -2,6 +2,7 @@
 // This is our custom WebSocket handler class (that implements the 'MessageComponentInterface' of the Ratchet library)
 // This class is copied from: http://socketo.me/docs/hello-world#logic
 // Note: If you edit/change any code that is related to the WebSocket Server (i.e. Ratchet library) (example: If you edit/change any code in Chat.php class), you must restart the WebSocket Server in order for the changes to take effect (by opening the terminal and stopping the already running WebSocket Server by CTRL + C, then starting it again by using the    "php bin/server.php"    command).
+// Note: The    resourceId    property, which is the unique identifier (i.e. WebSocket Connection ID AKA WebSocket Session ID) that the WebSocket Connection (Ratchet) randomly generates for every client (user) connected a WebSocket Connection, is present/exists/available in the following objects in Ratchet library:    $conn->resourceId (assigned by WebSocket Connection (Ratchet)),    $client->resourceId (assigned by WebSocket Connection (Ratchet)) (N.B. You have to use    foreach ($this->clients as $client) {    first.), and    $from->resourceId (This is not a WebSocket Connection ID, but rather the `user_id` column (in `chat_user_table` database table) of the message sender that we assign ourselves, and we send it from the client side (JavaScript) from the    conn.send()    JavaScript function in chatroom.php and privatechat.php to the onMessage() method of the Chat.php Class)
 
 namespace MyApp;
 use Ratchet\MessageComponentInterface;
@@ -35,14 +36,14 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
         // exit;
 
 
-        // Disply the Online/Offline Status of all users/clients based on the onOpen() and onClose() methods (in case of 'One-to-One/Private' Chat ONLY, not 'Group' Chat. With 'Group' Chat, we depended on the `user_login_status` column of `chat_user_table` table) (This script is repeated inside the onClose() method of this class too for the Online/Offline Status too (Online Status))
-        // Note: We have the same script in onClose() method for the 'Offline' Status. Check the onClose() method for the same script
+        // Disply the Online/Offline Status (here 'Online' Status because we're inside onOpen() method) of all users/clients based on the onOpen() and onClose() methods (in case of 'One-to-One/Private' Chat ONLY, not 'Group' Chat. With 'Group' Chat, we depended on the `user_login_status` column of `chat_user_table` table) (This script is repeated inside the onClose() method of this class too for the Online/Offline Status too (Online Status))
+        // Note: We have the SAME script in onClose() method for the 'Offline' Status. Check the onClose() method for the same script
         // Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
         // Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
-        // Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
+        // Note: Sending data from any methods of the custom WebSocket Handler Chat.php Class (using    $client->send()    ) triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
         // Note: With every client (user) connected to a WebSocket Connection (Ratchet library), WebSocket Connection generates and assigns every client (user) a unique connection ID (N.B. You can check that unique WebSocket identifier using     $conn->resourceId     ). And the idea of the 'One-to-One' or 'Private' Chat is based on it plus the `user_token` that we generate by ourselves with every user Login process in index.php. We can store those unique Connection IDs plust the `user_token` for every client in the database, and later we can depend on them to implement One-to-One or Private Chat. To implement the 'One-to-One' or 'Private' Chat, We use TWO table columns of the `chat_user_table`, firstly, the `user_token` column, where with every user login process we generate a unique random string using     md5(uniqid())     and then we pass this unique string as a Query String Parameter in the URL used in the client side JavaScript WebSocket constructor to start the WebSocket connection (i.e.     var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');     ). N.B.  You can check this unique string (token) by connecting to a WebSocket Connection, then use 'Inspect' in your browser console, click on the 'Network' tab, then under 'Name' you'll find something like 'ws://localhost:8080/?token=014c3972efce8dc679b25d45a2ce2bd6', you can click on it and check the 'Headers', 'Payload', 'Initiators', ... tabs), secondly, the `user_connection_id` column which is randomly generated by WebSocket for every client connected to the WebSocket Connection (AKA WebSocket Session ID). N.B. You can access this unique identifier using     $conn->resourceId     . Check     https://www.youtube.com/watch?v=PuXfgSzDDcg&list=PLxl69kCRkiI0U4rM9RA1VBah5tfU26-Fp&index=15
         // The purpose of this code is Dispaly User Online/Offline Status: In case of 'One-to-One/Private' Chat ONLY (NOT 'Group' Chat), we send the $data variable to the client side which contains 'status_type' and 'user_id_status' (the `user_id` of the user) to all clients/users, in order for every user to view the Online/Offline Status of the other users in the client side in privatechat.php
-        // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
+        // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods (or any methods of Chat.php in general) (using    $client->send()    ) here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
         // Get the unique $token (`user_token` in `chat_user_table` table) that we generated (upon every user login process in index.php using the    md5(uniqid())    functions). This $token gets passed from the client side (JavaScript) request's URL as a Query String Parameter inside the Browser/Web API WebSocket() Constructor function in privatechat.php i.e.    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');
         // https://stackoverflow.com/questions/22761900/access-extra-parameters-in-ratchet-web-socket-requests
         // https://github.com/ratchetphp/Ratchet/blob/master/CHANGELOG.md#:~:text=BC%3A%20%24conn%2D%3EWebSocket%2D%3Erequest%20replaced%20with%20%24conn%2D%3EhttpRequest%20which%20is%20a%20PSR%2D7%20object
@@ -66,13 +67,14 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
         // echo '<pre>', var_dump($queryarray), '</pre>';  // Example:    [ "token" => "014c3972efce8dc679b25d45a2ce2bd6" ]
         // exit;
 
-        if (isset($queryarray['token'])) // Display User Online/Offline Status in case of 'One-to-One/Private' Chat    // If the chat is 'One-to-One' or 'Private' Chat (not 'Group' Chat) i.e. The JavaScript WebSocket Constructor function URL contains a 'token' as a query string parameter e.g.    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');    (which comes from the JavaScript in privatechat.php)
+        if (isset($queryarray['token'])) // Display User Online/Offline Status in case of 'One-to-One/Private' Chat only    // If the chat is 'One-to-One' or 'Private' Chat (not 'Group' Chat) i.e. The JavaScript WebSocket Constructor function URL contains a 'token' as a query string parameter e.g.    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');    (which comes from the JavaScript in privatechat.php)
         {
+            // Get the user's `user_id` that just opened the WebSocket Connection from `chat_user_table` table based on the 'token' (i.e. `user_token` column) passed as a query string parameter in the URL (coming from    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');    in client side (JavaScript) in privatechat.php). This is to eventually send that went online user `user_id` and    $data['status_type'] = 'Online';   to all One-to-One/Private Chat Users to display User Online/Offline Status (here 'Online')
             $user_object = new \ChatUser;
 
             $user_object->setUserToken($queryarray['token']); // We set the 'token' in order to use it to get the `user_id` from `chat_user_table` table (by using the    get_user_id_from_token()    method)
             $user_object->setUserConnectionId($conn->resourceId); // Note:    $conn->resourceId    is a unique identifier generated by the WebSocket Server for every connected client (user) (is also called WebSocket Session ID)
-            $user_object->update_user_connection_id(); // Store the unique WebSocket Connection ID (also AKA Session ID) of the client (user) in the `user_connection_id` column in `chat_user_table` table which is generated by the WebSocket Connection for every client (user)
+            $user_object->update_user_connection_id(); // Store the unique WebSocket Connection ID (also AKA WebSocket Session ID) of the client (user) in the `user_connection_id` column in `chat_user_table` table which is generated by the WebSocket Connection for every client (user)
             $user_data = $user_object->get_user_id_from_token(); // We use this method as we have previously set the user's token using    setUserToken()    method in the last couple of lines of code
             // echo '<pre>', var_dump($user_data), '</pre>';
             // exit;
@@ -88,7 +90,7 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
             // first, you are sending to all existing users message of 'new'
             foreach ($this->clients as $client)
             {
-                // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
+                // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods (or any methods of Chat.php Class, in general) (using    $client->send()    ) here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
                 $client->send(json_encode($data)); // here we are sending a status-message    // $data is then parsed to a JavaScript Object by JavaScript by the    conn.onmessage    in chatroom.php
             }
         }
@@ -98,7 +100,7 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
         echo "New connection! ({$conn->resourceId})\n"; // $conn->resourceId    is a unique identifier generated by the WebSocket Server for every connected client (user) (is also called WebSocket Session ID)
     }
 
-    public function onMessage(ConnectionInterface $from, $msg) { // $from and $msg (they are the 'userId' key and 'msg' key of the 'data' JavaScript object in chatroom.php) inside the JavaScript 'data' variable in chatroom.php) are sent by JavaScript (under the "Handling Chat HTML Form Submission" Section in chatroom.php) using the    conn.send()    function in chatroom.php    // This method is triggered when a chat message is sent from the client side chatroom.php (via JavaScript in the <script> tag), then it takes this message and, in turn, it sends it to all other clients (receivers), including the sender themselves    // $from and $msg    are the JSON 'data' JavaScript Object (converted to JSON) sent from the client side WebSocket ($from is the 'userId' key, and $msg is the 'msg' key that are sent from client side (JavaScript) when the Chat HTML Form is submitted using JavaScript in chatroom.php or privatechat.php. Check the <script> HTML tag in the same file (Under the "Handling Chat HTML Form Submission" Section in chatroom.php)), and it's passed on (sent again) to all other connected users' client side (i.e. Browser/JavaScript) (it's sent again to all users's client side (Browser/JavaScript) connected to the chat WebSocket)
+    public function onMessage(ConnectionInterface $from, $msg) { // $from and $msg (they are the 'userId' key and 'msg' key of the 'data' JavaScript object in chatroom.php) inside the JavaScript 'data' variable in chatroom.php) are sent by JavaScript (under the "Handling Chat HTML Form Submission" Section in chatroom.php) using the    conn.send()    function in chatroom.php    // This method is triggered when a chat message is sent from the client side chatroom.php (via JavaScript in the <script> tag), then it takes this message and, in turn, it sends it to all other clients (receivers), including the sender themselves    // $from and $msg    are the JSON 'data' JavaScript Object (converted to JSON) sent from the client side WebSocket ($from is the 'userId' key, and $msg is the 'msg' key that are sent from client side (JavaScript) when the Chat HTML Form is submitted using JavaScript in chatroom.php or privatechat.php. Check the <script> HTML tag in the same file (Under the "Handling Chat HTML Form Submission" Section in chatroom.php)), and it's passed on (sent again) to all other connected users' client side (i.e. Browser/JavaScript) (it's sent again to all users's client side (Browser/JavaScript) connected to the chat WebSocket)    // Note: The    resourceId    property, which is the unique identifier (i.e. WebSocket Connection ID AKA WebSocket Session ID) that the WebSocket Connection (Ratchet) randomly generates for every client (user) connected a WebSocket Connection, is present/exists/available in the following objects in Ratchet library:    $conn->resourceId (assigned by WebSocket Connection (Ratchet)),    $client->resourceId (assigned by WebSocket Connection (Ratchet)) (N.B. You have to use    foreach ($this->clients as $client) {    first.), and    $from->resourceId (This is not a WebSocket Connection ID, but rather the `user_id` column (in `chat_user_table` database table) of the message sender that we assign ourselves, and we send it from the client side (JavaScript) from the    conn.send()    JavaScript function in chatroom.php and privatechat.php to the onMessage() method of the Chat.php Class)
         // echo '<pre>', var_dump($msg), '</pre>'; // Note: If you edit/change any code that is related to the WebSocket Server (i.e. Ratchet library) (example: If you edit/change any code in Chat.php class), you must restart the WebSocket Server in order for the changes to take effect (by opening the terminal and stopping the already running WebSocket Server by CTRL + C, then starting it again by using the    "php bin/server.php"    command).    // Example (JSON):     "{"userId":"11", "msg":"how are you?"}"    // This $msg (of JSON type) is sent from the client side (JavaScript) in chatroom.php
         // exit;
 
@@ -113,7 +115,8 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
         echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n" // This message is printed (echo-ed) inside your WebSocket Server's terminal/command-line window / Command Line window
             , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
 
-        // echo '<pre>', var_dump($from->resourceId), '</pre>'; // Example:    11
+        // Note: The    resourceId    property, which is the unique identifier (i.e. WebSocket Connection ID AKA WebSocket Session ID) that the WebSocket Connection (Ratchet) randomly generates for every client (user) connected a WebSocket Connection, is present/exists/available in the following objects in Ratchet library:    $conn->resourceId (assigned by WebSocket Connection (Ratchet)),    $client->resourceId (assigned by WebSocket Connection (Ratchet)) (N.B. You have to use    foreach ($this->clients as $client) {    first.), and    $from->resourceId (This is not a WebSocket Connection ID, but rather the `user_id` column (in `chat_user_table` database table) of the message sender that we assign ourselves, and we send it from the client side (JavaScript) from the    conn.send()    JavaScript function in chatroom.php and privatechat.php to the onMessage() method of the Chat.php Class)
+        // echo '<pre>', var_dump($from->resourceId), '</pre>'; // Example:    11    (the `user_id` column in `chat_user_table` database table)
         // exit;
 
 
@@ -122,58 +125,77 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
         // exit;
 
 
+        // Now, we determine whether the message coming from the    conn.send()    function in chatroom.php ('Group' Chat) or privatechat.php ('One-to-One/Private' Chat) is 'Group' or 'One-to-One/Private' Chat message based on the presence of the    command: 'private'    key-value pair or not (which is sent by the    conn.send()    function from the client side (chatroom.php or privatechat.php))
         // One-to-One/Private Chat
         // if ($data['command'] == 'private')
-        if (isset($data['command']) && $data['command'] == 'private')
+        if (isset($data['command']) && $data['command'] == 'private') // If the    command: 'private'    key-value pair is sent with the    conn.send()    function in chatroom.php or privatechat.php, this means this is a 'ONE-TO-ONE/PRIVATE' Chat message, NOT a 'Group' Chat message
         {
             // Private Chat
-            $private_chat_object = new \PrivateChat; // To store 'One-to-One/Private' Chat messages in the `chat_message` database table (to display the Chat History)
+            // To store 'One-to-One/Private' Chat messages in the `chat_message` database table (to save and display the One-to-One/Private Chat History)
+            $private_chat_object = new \PrivateChat;
 
-            $private_chat_object->setToUserId($data['receiver_userid']); // Private Message Sender's   `to_user_id`   in `chat_message` table
-            $private_chat_object->setFromUserId($data['userId']);        // Private Message Receiver's `from_user_id` in `chat_message` table
-            $private_chat_object->setChatMessage($data['msg']);
+            $private_chat_object->setToUserId($data['receiver_userid']); // Private Message Sender's   `to_user_id`   column in `chat_message` table    // $data is sent by the    conn.send()    JavaScript function in chatroom.php or privatechat.php
+            $private_chat_object->setFromUserId($data['userId']);        // Private Message Receiver's `from_user_id` column in `chat_message` table    // $data is sent by the    conn.send()    JavaScript function in chatroom.php or privatechat.php
+            $private_chat_object->setChatMessage($data['msg']); // $data is sent by the    conn.send()    JavaScript function in chatroom.php or privatechat.php
             $timestamp = date('Y-m-d h:i:s');
             $private_chat_object->setTimestamp($timestamp);
             $private_chat_object->setStatus('Yes');
-            $chat_message_id = $private_chat_object->save_chat();
+            $chat_message_id = $private_chat_object->save_chat(); // This save_chat() method return the ID of the last inserted One-to-One/Private Chat message (in `chat_message` table)
 
 
             $user_object = new \ChatUser;
-            $user_object->setUserId($data['userId']);
+
+            // Get One-to-One/Private Chat message sender's data from `chat_user_table` table
+            $user_object->setUserId($data['userId']); // $data is sent by the    conn.send()    JavaScript function in chatroom.php or privatechat.php
             $sender_user_data = $user_object->get_user_data_by_id();
+            $sender_user_name = $sender_user_data['user_name']; // The sender's `user_id` column in `chat_user_table` table
+
+            // Get One-to-One/Private Chat message receiver's data from `chat_user_table` table
             $user_object->setUserId($data['receiver_userid']);
             $receiver_user_data = $user_object->get_user_data_by_id();
-            $sender_user_name = $sender_user_data['user_name'];
-            $data['datetime'] = $timestamp;
-            $receiver_user_connection_id = $receiver_user_data['user_connection_id'];
+            $receiver_user_connection_id = $receiver_user_data['user_connection_id']; // The receiver's `user_connection_id` column of `chat_user_table` table
+
+            // $sender_user_name = $sender_user_data['user_name'];
+            $data['datetime'] = $timestamp; // Append 'datetime' array key to be eventually sent to the targeted/specific/particular 'One-to-One/Private' Chat user as JSON
+            // $receiver_user_connection_id = $receiver_user_data['user_connection_id'];
 
             foreach ($this->clients as $client)
             {
+                // echo '<pre>', var_dump($client->resourceId), '</pre>'; // The unique WebSocket Connection IDs (AKA WebSocket Session IDs) generated by the WebSocket Connection (Ratchet) for all connected clients (users)
+
+
                 // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
-                if ($from == $client)
+                if ($from == $client) // If the user/client is the original message sender themselves (If the client is the message sender, so this means they will receive the same (their) sent message on the client side (JavaScript))
                 {
-                    $data['from'] = 'Me'; // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
+                    $data['from'] = 'Me'; // Include the chat message sender's name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
                 }
-                else
+                else // If the user/client is NOT the original message sender
                 {
-                    $data['from'] = $sender_user_name; // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
+                    $data['from'] = $sender_user_name; // Include the chat message sender's name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
                 }
 
-                if ($client->resourceId == $receiver_user_connection_id || $from == $client)
+
+                // Make sure we're sending the message to one particular/specific/targeted user/client i.e. 'One-to-One/Private' Chat, NOT to all users as with 'Group' Chat
+                // Note: The    resourceId    property, which is the unique identifier (i.e. WebSocket Connection ID AKA WebSocket Session ID) that the WebSocket Connection (Ratchet) randomly generates for every client (user) connected a WebSocket Connection, is present/exists/available in the following objects in Ratchet library:    $conn->resourceId (assigned by WebSocket Connection (Ratchet)),    $client->resourceId (assigned by WebSocket Connection (Ratchet)) (N.B. You have to use    foreach ($this->clients as $client) {    first.), and    $from->resourceId (This is not a WebSocket Connection ID, but rather the `user_id` column (in `chat_user_table` database table) of the message sender that we assign ourselves, and we send it from the client side (JavaScript) from the    conn.send()    JavaScript function in chatroom.php and privatechat.php to the onMessage() method of the Chat.php Class)
+                // echo '<pre>', var_dump($client->resourceId), '</pre>'; // The unique WebSocket Connection IDs (AKA WebSocket Session IDs) generated by the WebSocket Connection (Ratchet) for all connected clients (users)
+                if ($client->resourceId == $receiver_user_connection_id || $from == $client) // If the current session client's/user's unique WebSocket Connection ID (AKA WebSocket Session ID) which is generated by the WebSocket Connection (Ratchet) is equal to the receiver's WebSocket Connection ID which we have previously stored in the `user_connection_id` column in `chat_user_table` table (which means THIS is the TARGETED/PARTICULAR/SPECIFIC user to send the message to, and they (he/she) are currently ONLINE i.e. currently CONNECTED to the WebSocket Connection), OR, the clinet/user is the original message sender themselves (he/she) (i.e. if the sender is the receiver) (meaning send the message to the original sender again, too)
                 {   
+                    // Note: Sending data from any methods of the custom WebSocket Handler Chat.php Class (using    $client->send()    ) triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
                     $client->send(json_encode($data)); // The sender is not the receiver, send to each client connected    // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)    // $data is then parsed to a JavaScript Object by JavaScript by the    conn.onmessage    in chatroom.php
                 }
-                else
+                else // If the targeted/specific/particular client (user) who should be receiving the message is currently OFFLINE (i.e. not connected at the moment to the WebSocket Connection), don't send the message, and UPDATE the message's `status` column in `chat_message` table from 'Yes' to 'No' (i.e. 'Unread' message)
                 {
                     $private_chat_object->setStatus('No');
                     $private_chat_object->setChatMessageId($chat_message_id);
+
                     $private_chat_object->update_chat_status();
                 }
             }
         }
-        else // Group Chat
+        else // Group Chat    // If the    command: 'private'    key-value pair is NOT sent with the    conn.send()    function in chatroom.php or privatechat.php, this means this is a 'GROUP' Chat message, NOT a 'One-to-One/Private' Chat message
         {
             // Group Chat
+            // To store 'Group' Chat messages in the `chatrooms` database table (to save and display the Group Chat History)
             $chat_object = new \ChatRooms; // To store the chat messages in the `chatrooms` database table (to display the Chat History)
 
             $chat_object->setUserId($data['userId']); // 'userId' which came from the client side (JavaScript) in chatroom.php using the    conn.send()    function (Under the "Handling Chat HTML Form Submission" Section in chatroom.php)
@@ -202,11 +224,11 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
 
                 // Note: Here we send the message to BOTH the sender and receivers (but in case of the current user is the original sender, we include    $data['from'] = 'Me'    with the message (i.e. $data variable) sent to the client side, and in case of the current user is not the sender of that message (a receiver), we include    $data['from'] = $user_name;    with the message (i.e. $data variable) sent to the client side)
                 // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
-                if ($from == $client) // If the user is the original sender of the messsage (i.e. Send/Make    $data['from'] = 'Me'    for the original sender of the message, and Send/make it    $data['from'] = $user_name;    for the rest of the receivers of that message)
+                if ($from == $client) // If the user is the original sender of the messsage (i.e. Send/Make    $data['from'] = 'Me'    for the original sender of the message, and Send/make it    $data['from'] = $user_name;    for the rest of the receivers of that message)    // If the user/client is the original message sender themselves (If the client is the message sender, so this means they will receive the same (their) sent message on the client side (JavaScript))
                 {
                     $data['from'] = 'Me'; // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
                 }
-                else // If the user is NOT the sender of the message (they are just a receiver) (i.e. Send/Make    $data['from'] = 'Me'    for the original sender of the message, and send/make it    $data['from'] = $user_name;    for the rest of the receivers of that message)
+                else // If the user is NOT the sender of the message (they are just a receiver) (i.e. Send/Make    $data['from'] = 'Me'    for the original sender of the message, and send/make it    $data['from'] = $user_name;    for the rest of the receivers of that message)    // If the user/client is NOT the original message sender
                 {
                     $data['from'] = $user_name;  // Include the chat message sender name in the $data array to eventually convert it to JSON and send it to the client side (to be received by JavaScript)
                 }
@@ -219,17 +241,18 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
 
     public function onClose(ConnectionInterface $conn) {
 
-        // Disply the Online/Offline Status of all users/clients based on the onOpen() and onClose() methods (in case of 'One-to-One/Private' Chat ONLY, not 'Group' Chat. With 'Group' Chat, we depended on the `user_login_status` column of `chat_user_table` table) (This script is repeated inside the onOpen() method of this class too for the Online/Offline Status too (Offline Status))
-        // Note: We have the same script in onOpen() method for the 'Online' Status. Check the onOpen() method for the same script (and better explanation)
+        // Disply the Online/Offline Status (here 'Offline' Status because we're inside onClose() method) of all users/clients based on the onOpen() and onClose() methods (in case of 'One-to-One/Private' Chat ONLY, not 'Group' Chat. With 'Group' Chat, we depended on the `user_login_status` column of `chat_user_table` table) (This script is repeated inside the onOpen() method of this class too for the Online/Offline Status too (Offline Status))
+        // Note: We have the SAME script in onOpen() method for the 'Online' Status. Check the onOpen() method for the same script (and better explanation)
         // Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
         // Note: For displaying User Online/Offline Status, with 'One-to-One/Private' Chat, we depended on the onOpen() and onClose() methods of the custom WebSocket handler Chat.php class (which is the best way because it's Real-time and Instantaneous), but with the 'Group' Chat, we depended on the `user_login_status` column of the `chat_user_table` database table (which is a bad idea, because a user can just close the browser and don't click on Logout, and if they don't click on Logout, the `user_login_status` column value won't be changed, then their Online/Offline Status will be always 'Online').
-        // Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
-        $querystring = $conn->httpRequest->getUri()->getQuery();
+        // Note: Sending data from any methods of the custom WebSocket Handler Chat.php Class (using    $client->send()    ) triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
+        $querystring = $conn->httpRequest->getUri()->getQuery(); // Example:    token=014c3972efce8dc679b25d45a2ce2bd6    // This is the `user_token` we created by ourselves upon every user login process
 
         parse_str($querystring, $queryarray);
 
-        if (isset($queryarray['token'])) // Display User Online/Offline Status in case of 'One-to-One/Private' Chat    
+        if (isset($queryarray['token'])) // Display User Online/Offline Status in case of 'One-to-One/Private' Chat only    // If the chat is 'One-to-One' or 'Private' Chat (not 'Group' Chat) i.e. The JavaScript WebSocket Constructor function URL contains a 'token' as a query string parameter e.g.    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');    (which comes from the JavaScript in privatechat.php)
         {
+            // Get the user's `user_id` that closed the WebSocket Connection from `chat_user_table` table based on the 'token' (i.e. `user_token` column) passed as a query string parameter in the URL (coming from    var conn = new WebSocket('ws://localhost:8080?token=<?php echo $token; >');    in client side (JavaScript) in privatechat.php). This is to eventually send that went offline user `user_id` and    $data['status_type'] = 'Offline';   to all One-to-One/Private Chat Users to display User Online/Offline Status (here 'Offline')
             $user_object = new \ChatUser;
 
             $user_object->setUserToken($queryarray['token']);
@@ -241,7 +264,7 @@ class Chat implements MessageComponentInterface { // The 'Chat' class is our cus
 
             foreach ($this->clients as $client)
             {
-                // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
+                // Important: Sending this $data array variable (using    $client->send(json_encode($data));    ) from onOpen() or onClose() methods (or from any methods of Chat.php Class, in general) (using    $client->send()    ) here (we're on the server-side) triggers the    conn.onmessage    event on the client side (JavaScript) in privatechat.php i.e.    conn.onmessage = function(e) {
                 $client->send(json_encode($data)); // $data is then parsed to a JavaScript Object by JavaScript by the    conn.onmessage    in chatroom.php
             }
         }

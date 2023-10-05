@@ -111,43 +111,39 @@ class PrivateChat
 		return $statement->fetchAll(PDO::FETCH_ASSOC);
 	}
 
-	function save_chat()
+	function save_chat() // Save 'One-to-One/Private' Chat messages between two users
 	{
-		$query = "
-		INSERT INTO chat_message 
-			(to_user_id, from_user_id, chat_message, timestamp, status) 
-			VALUES (:to_user_id, :from_user_id, :chat_message, :timestamp, :status)
-		";
+		$query =
+			"INSERT INTO chat_message 
+				(to_user_id, from_user_id, chat_message, timestamp, status) 
+			VALUES
+				(:to_user_id, :from_user_id, :chat_message, :timestamp, :status)"
+		;
 
 		$statement = $this->connect->prepare($query);
 
-		$statement->bindParam(':to_user_id', $this->to_user_id);
-
+		$statement->bindParam(':to_user_id'  , $this->to_user_id);
 		$statement->bindParam(':from_user_id', $this->from_user_id);
-
 		$statement->bindParam(':chat_message', $this->chat_message);
-
-		$statement->bindParam(':timestamp', $this->timestamp);
-
-		$statement->bindParam(':status', $this->status);
+		$statement->bindParam(':timestamp'   , $this->timestamp);
+		$statement->bindParam(':status'      , $this->status);
 
 		$statement->execute();
 
-		return $this->connect->lastInsertId();
+		return $this->connect->lastInsertId(); // Return the ID of the last inserted One-to-One/Private Chat message
 	}
 
 	function update_chat_status()
 	{
-		$query = "
-		UPDATE chat_message 
+		$query =
+			"UPDATE chat_message 
 			SET status = :status 
-			WHERE chat_message_id = :chat_message_id
-		";
+			WHERE chat_message_id = :chat_message_id"
+		;
 
 		$statement = $this->connect->prepare($query);
 
-		$statement->bindParam(':status', $this->status);
-
+		$statement->bindParam(':status'         , $this->status);
 		$statement->bindParam(':chat_message_id', $this->chat_message_id);
 
 		$statement->execute();

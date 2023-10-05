@@ -176,7 +176,7 @@ $user_data = $user_object->get_user_all_data();
 								<img src="<?php echo $value['profile']; ?>" width="150" class="img-fluid rounded-circle img-thumbnail" />
 								<h3 class="mt-2"><?php echo $value['name']; ?></h3>
 								<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
-								<input type="button" class="btn btn-primary mt-2 mb-2" name="logout" id="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call. -->
+								<input type="button" class="btn btn-primary mt-2 mb-2" name="logout" id="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call to action.php -->
 							</div>
 					<?php
 						}
@@ -243,24 +243,24 @@ $user_data = $user_object->get_user_all_data();
 
 
 			// Triggered when a WebSocket Connection is opnend    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/open_event
-			// Important Note: This    conn.onmessage    isn't triggered only by receiving data from the onMessage() method of the custom WebSocket handler Chat.php class, but also by receiving data from the onOpen() and onClode() methods of Chat.php Class as they contain    $client->send(json_encode($data));    line of code which sends the 'user_id_status' and 'status_type' to all 'One-to-One'/Private' Chat users/clients in order to display Users and their User Online/Offline Status. To check those data, type in    console.log(event);    and    console.log(event.data);
 			conn.onopen = function(e) {
 				// console.log(e);
-				console.log("Connection established! (Group Chat)");
+				console.log("Connection Established! (Group Chat)");
 			};
 
 
 
 			// Triggered when a message is 'received' through a WebSocket (i.e. Triggered when a message is 'received' from the backend PHP WebSocket Server) (N.B. This also includes the message SENT by the current message sender too i.e. When a user sends a message, THEY (the sender) receive this message again (his/her message) through the    conn.onmessage    function, along with all the other users who receive that message.)    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/message_event
+			// Important Note: This    conn.onmessage    isn't triggered only by receiving data from the onMessage() method of the custom WebSocket handler Chat.php class, but also by receiving data from the onOpen() and onClode() methods of Chat.php Class (to display users and their Online/Offline Status) as they contain    $client->send(json_encode($data));    line of code which sends the 'user_id_status' and 'status_type' to all 'One-to-One'/Private' Chat users/clients in order to display Users and their User Online/Offline Status. To check those data, type in    console.log(event);    and    console.log(event.data);
 			// Note: This    conn.onmessage    function receives all messages from our custom WebSocket handler Chat.php class
-			// Note: Sending data from the onOpen() and onClose() methods of the custom WebSocket Handler Chat.php Class triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
+			// Note: Sending data from any methods of the custom WebSocket Handler Chat.php Class (using    $client->send()    ) triggers the    conn.onmessage    event in JavaScript on the client side (here in this project, in privatechat.php or chatroom.php) (i.e. It doesn't trigger the    conn.onopen    or    conn.onclose    JavaScript events!)
 			conn.onmessage = function(e) {
 				// Note: With the 'Group' Chat (in chatroom.php), we depended on the `user_login_status` column of `chat_user_table` table to display the Online/Offline Status of all users/clients, but with the 'One-to-One/Private' Chat (in privatechat.php), we depended on the onOpen() and onClose() methods here to send the `user_id` user id and status 'Online' or 'Offline to all users/clients on the Client Side (to be handled by JavaScript in privatechat.php inside the    conn.onmessage = function(event) {    ). And of cousre, depending on the onOpen() is the best option because it means the Online/Offline is live and instantaneous, unlike the case with depending on the `user_login_status` column
 
 
 
 				// console.log(e);
-				// console.log(e.data); // Display the received chat message through WebSocket
+				// console.log(e.data); // Log the received data through WebSocket in the browser's console (from the onMessage() method of the custom WebSocket handler Chat.php Class)
 
 
 				var data = JSON.parse(e.data); // Convert the received chat message from a JSON string to a JavaScript Object
@@ -270,7 +270,7 @@ $user_data = $user_object->get_user_all_data();
 				var row_class 		 = '';
 				var background_class = '';
 
-				// If the user is the original sender of the message i.e. If the chat message is 'sent' i.e. If the chat message is sent by the current user (i.e. the user that is currently using the browser window i.e. 'Me'), make the chat message on the left side, and also play that specific notification audio
+				// If the user is the original sender (the authenticated/logged-in user) of the message i.e. If the chat message is 'sent' i.e. If the chat message is sent by the current user (i.e. the user that is currently using the browser window i.e. 'Me'), make the chat message on the left side, and also play that specific notification audio
 				if (data.from == 'Me') // Note: 'Me' and 'dt' (date) are sent from the backend from the Chat.php class
 				{
 					row_class        = 'row justify-content-start';
@@ -326,38 +326,42 @@ $user_data = $user_object->get_user_all_data();
 
 			// console.log($('#messages_area')); // The jQuery wrapper
 			// console.log($('#messages_area')[0]); // The <div> DOM element itself
-			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the 'Group' chat area to show latest messages (after the web page has loaded)
+			$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the 'Group' Chat area to show latest messages (after the web page has loaded)
 
 
 
-			// Handling 'Group' Chat HTML Form Submission (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
+			// Handling 'Group' Chat HTML Form Submission (sending messages to ALL users, NOT to a one specific user as with 'One-to-One/Private' Chat) (Handling sending chat messages to the onMessage() method of the custom WebSocket handler Chat.php class)
 			$('#chat_form').on('submit', function(event) { // When the Chat HTML Form is submitted
 				event.preventDefault(); // Prevent actual HTML Form submission to avoid page refresh which can ruin user experience (i.e. Prevent form submission by HTML. JavaScript will handle form submission.)
 
-				if ($('#chat_form').parsley().isValid()) // If the submitted data passes Parsley library validation
+				if ($('#chat_form').parsley().isValid()) // If the Group Chat HTML Form submitted data passes Parsley library validation
 				{
-					var user_id = $('#login_user_id').val();
-					var message = $('#chat_message').val(); // The chat message written by a user in the assigned chat <textarea>
+					var user_id = $('#login_user_id').val(); // The authenticated/logged-in user's `user_id` in `chat_user_table` table
+					var message = $('#chat_message').val(); // The submitted Group Chat message written by a user in the assigned chat <textarea>
 					var data    = { // Those data (i.e. 'userId' and 'msg') are sent to the onMessage() method of the custom WebSocket handler Chat.php Class)
 						userId: user_id, // Can be accessed inside the onMessage() method of Chat.php Class through    $from->resourceId
 						msg   : message  // Can be accessed inside the onMessage() method of Chat.php Class through    $msg
+						// With 'One-to-One/Private' Chat messages case, we add/send here an extra    command: 'private'    key-value pair to signal that the sent message is a ONE-TO-ONE/PRIVATE Chat message, not a Group Chat message, to the onMessage() method in Chat.php Class
 					};
 
-					conn.send(JSON.stringify(data)); // Send the chat message via WebSocket (to our custom WebSocket handler Chat.php class in the backend (to the onMessage() method of the Chat.php class))    // Convert the JavaScript Object to a JSON string (to send it to the server (our custom WebSocket handler Chat.php class))
+					conn.send(JSON.stringify(data)); // Send the Group Chat message via WebSocket to the onMessage() method of our custom WebSocket handler Chat.php class in the backend    // Convert the JavaScript Object to a JSON string (to send it to the server (our custom WebSocket handler Chat.php class))
 					$('#messages_area').scrollTop($('#messages_area')[0].scrollHeight); // Scroll to the bottom of the 'Group' chat area to show latest messages (after submitting the Chat HTML Form i.e. after sending the chat message)
 				}
 			});
 
 
 
-			// Logout (When the Logout button is clicked (the button is in this file)) (N.B. This changes the `user_login_status` column of the `chat_user_table` database table from 'Login' to 'Logout')
+			// Logout (When the Logout button is clicked (the button is in this file)) (N.B. This updates the `user_login_status` column of the `chat_user_table` database table from 'Login' to 'Logout')
 			$('#logout').click(function(){
 				user_id = $('#login_user_id').val();
 
 				$.ajax({
 					url   : "action.php",
 					method: "POST",
-					data  : {user_id:user_id, action:'leave'},
+					data  :{
+						user_id: user_id,
+						action : 'leave'
+					},
 					success:function(data) // 'data' is the response from the server (server-side/backend) (action.php). It contains the 'status' key. Check the first if condition in action.php
 					{
 						var response = JSON.parse(data);
