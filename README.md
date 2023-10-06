@@ -57,9 +57,9 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 ## Installation & Configuration:
 1- Clone the project or download it.
 
-2- Create a MySQL database named **\`blog\`** and import the database schema from [blog database - PhpMyAdmin Export.sql](<Database - blog/blog database - SQL Dump File - PhpMyAdmin Export.sql>) SQL Dump file. Navigate to '**`Database - blog`**/**`blog database - SQL Dump File - PhpMyAdmin Export.sql`**' SQL Dump file.
+2- Create a MySQL database named **\`chat_application\`**, then import the **[chat_application database SQL Dump File](<Database - chat_application/chat_application database - SQL Dump File - phpMyAdmin Export.sql>)** into your **\`chat_application\`** database.
 
-3- Navigate to the database connection configuration file in [config.php](config.php) file and configure/edit/update the file with your MySQL database credentials and other configuration settings.
+3- Navigate to the database connection configuration file in [Database_connection.php](database/Database_connection.php) file and configure/edit/update the file with your MySQL database credentials and other configuration settings.
 
 4- Note: ***Apache*** Web Server must be used to serve this project in order for the application routing system and '***.htaccess***' file to work properly! Place the project inside your *'**htdocs***' folder.
 
