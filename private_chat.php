@@ -368,13 +368,13 @@ require('database/GroupChatMessageModel.php');
 								if (data[count].from_user_id == from_user_id) // If the Chat History message is sent by the authenticated/logged-in user to the selected user, show it on the left side of the chat area
 								{
 									row_class        = 'row justify-content-start';
-									background_class = 'alert-primary';
+									background_class = 'alert-secondary';
 									user_name        = 'Me';
 								}
 								else // If the Chat History essage is sent by the selected user to the authenticated/logged-in user, show it on the right side of the chat area
 								{
 									row_class = 'row justify-content-end';
-									background_class = 'alert-success';
+									background_class = 'alert-warning';
 									user_name = data[count].from_user_name;
 								}
 
