@@ -75,4 +75,4 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 > Email: **fatma@test.com**, Password: **123456**
 
 ## Contribution:
-Contributions to my Real-time WebSocket PHP Chat Application are most welcome! If you find any issues or have suggestions for improvements or want to add new features, please open an issue or submit a pull request.
+Contributions to my Real-time WebSocket PHP Chat Application are most welcome! If you find any issues, have suggestions for improvements, or want to add new features, please open an issue or submit a pull request.
