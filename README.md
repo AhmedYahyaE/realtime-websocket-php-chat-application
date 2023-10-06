@@ -43,11 +43,13 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 11- Sending Registration Verification Code to emails using PHPMailer Library.
 
-12- File Upload (profile image).
+12- Playing different Notification Sounds when sending and receiving messages.
 
-13- Regular Expression.
+13- File Upload (profile image).
 
-14- Responsive Design using Bootstrap.
+14- Regular Expression.
+
+15- Responsive Design using Bootstrap.
 
 ## Application URLs:
 1- **Group/Public Chat**: Engage in lively discussions with ALL the Chat Application users at http://localhost:8000/group_chat.php
