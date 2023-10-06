@@ -61,13 +61,15 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 3- Navigate to the database connection configuration file in [Database_connection.php](database/Database_connection.php) file and configure/edit/update the file with your MySQL database credentials and other configuration settings.
 
-4- Note: ***Apache*** Web Server must be used to serve this project in order for the application routing system and '***.htaccess***' file to work properly! Place the project inside your *'**htdocs***' folder.
+4- Navigate to the project root directory using the **`cd`** terminal command, and then start your PHP built-in Development Web Server by running the command: **`php -S localhost:8000`**.
 
-5- In your browser, go to http://127.0.0.1/blog/ (**Frontend**) and http://127.0.0.1/blog/admin or http://127.0.0.1/blog/admin/login (**Admin Panel**). N.B. All the application routes are defined in the [Application Routes](App/index.php) file.
+5- From your terminal window (at the project root directory), start the WebSocket Server by running the command: **`php bin/server.php`**.
 
-6- Here are the ready-to-use registered user account credentials you can readily use (for both **Frontend** and **Admin Panel**):
+6- In your browser, go to http://localhost:8000 to login using one of the following ready-to-use accounts credentials:
 
-> **Email**: **ahmed.yahya@gmail.com**, **Password**: **123456**
+> Email: **ahmed.yahya@test.com**, Password: **123456**
+
+> Email: **fatma@test.com**, Password: **123456**
 
 ## Contribution:
-Contributions to my plain PHP/MySQL MVC OOP Blog application are most welcome! If you find any issues or have suggestions for improvements or want to add new features, please open an issue or submit a pull request.
+Contributions to my Real-time WebSocket PHP Chat Application are most welcome! If you find any issues or have suggestions for improvements or want to add new features, please open an issue or submit a pull request.
