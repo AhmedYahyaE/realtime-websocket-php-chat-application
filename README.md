@@ -1,12 +1,20 @@
 # Real-time WebSocket Technology Group & One-to-One/Private Chat Application built with PHP and Ratchet Library
-This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat.
+This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat. Built with PHP and WebSocket technology, my application provides a seamless platform for instant communication.
 Frontend technologies used: jQuery, JavaScript, AJAX and Bootstrap (responsive design).
 
 ## Screenshots:
 
-***Blog post:***
+***Group/Public Chat:***
 
-![blog-post](https://github.com/AhmedYahyaE/plain-php-mvc-oop-blog/assets/118033266/561f5609-39f6-4f8d-b5df-e3c2e86b99df)
+![group-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/17decefa-8e40-4609-b321-5ca34bdd0806)
+
+***One-to-One/Private Chat:***
+
+![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/55271096-b65f-4125-a0b7-6da2a6145015)
+
+***Profile Page:***
+
+![profile-page](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/01e0c22e-f236-4702-8dba-f2fb35bafbf4)
 
 ## Features:
 1- MVC design pattern, Routing System, Service Container, Middlewares, Pagination Class, Entry Point/Script file (index.php) for the whole application, ...
