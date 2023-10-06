@@ -68,7 +68,7 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 5- From your terminal window (at the project root directory), start the WebSocket Server by running the command: **`php bin/server.php`**.
 
-6- In your browser, go to http://localhost:8000 to login using one of the following ready-to-use accounts credentials:
+6- In your browser, go to http://localhost:8000 to login using one of the following ready-to-use account credentials:
 
 > Email: **ahmed.yahya@test.com**, Password: **123456**
 
