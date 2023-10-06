@@ -11,7 +11,7 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 ***One-to-One/Private Chat:***
 
-![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/7b251f66-dd47-4695-8e08-c1c65b0dff79)
+![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/cd0c52ca-1a42-4e38-8253-1a1c78a6908e)
 
 ***Profile Page:***
 
