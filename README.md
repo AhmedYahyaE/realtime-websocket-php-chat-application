@@ -10,24 +10,28 @@ Frontend technologies used: jQuery, JavaScript, AJAX and Bootstrap (responsive d
 
 ***One-to-One/Private Chat:***
 
-![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/01d8d728-39df-4d87-91a0-576206b44d91)
+![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/7b251f66-dd47-4695-8e08-c1c65b0dff79)
 
 ***Profile Page:***
 
 ![profile-page](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/d74fc7ab-16a7-435e-8707-8008a1e9cb78)
 
+***WebSocket Protocol:***
+
+![websocket-connection](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/62bc916c-f6e9-4dfd-a322-3fba92fc4d01)
+
 ## Features:
-1- MVC design pattern, Routing System, Service Container, Middlewares, Pagination Class, Entry Point/Script file (index.php) for the whole application, ...
+1- Real-time Seamless Chat Messaging using WebSocket Technology.
 
-2- User Registration, Authentication and Authorization.
+2- Two Chat Modes: Group/Public Chat & One-to-One/Private Chat.
 
-3- Login System (Session Management).
+3- Real-time Push Notifications to show Read/Unread Messages Count.
 
-4- Both Server-side and Client-side Validation.
+4- Real-time User Online/Offline Status.
 
-5- Admin Panel for managing blog users, posts and comments.
+5- Using Ratchet PHP WebSocket Library.
 
-6- User profile management.
+6- Object-Oriented Programming.
 
 7- Create, update, and delete blog posts.
 
