@@ -1,14 +1,14 @@
 <?php 
-// This class (a Public Chat Room Message Model) is used to store the chat messages in the `chatrooms` database table (to display the Chat History)
+// This class (a Public Chat Room Message Model) is used to store the chat messages in the `group_chat_messages` database table (to display the Chat History)
 
 
 
-class ChatRooms
+class GroupChatMessageModel
 {
-	// `chatrooms` database table column names
-	private $chat_id; // The ID of the chat message
-	private $user_id; // The ID of the user who sent the message
-	private $message;
+	// `group_chat_messages` database table column names
+	private $chat_id; // The ID of the group chat message
+	private $user_id; // The ID of the user who sent the group chat message
+	private $group_chat_message;
 	private $created_on;
 	protected $connect;
 
@@ -46,12 +46,12 @@ class ChatRooms
 
 	function setMessage($message)
 	{
-		$this->message = $message;
+		$this->group_chat_message = $message;
 	}
 
 	function getMessage()
 	{
-		return $this->message;
+		return $this->group_chat_message;
 	}
 
 	function setCreatedOn($created_on)
@@ -67,15 +67,15 @@ class ChatRooms
 	function save_chat()
 	{
 		$query =
-			"INSERT INTO chatrooms 
-			(userid, msg, created_on) VALUES (:userid, :msg, :created_on)"
+			"INSERT INTO group_chat_messages 
+			(userid, group_chat_message, created_on) VALUES (:userid, :group_chat_message, :created_on)"
 		;
 
 		$statement = $this->connect->prepare($query);
 
-		$statement->bindParam(':userid'	   , $this->user_id);
-		$statement->bindParam(':msg'	   , $this->message);
-		$statement->bindParam(':created_on', $this->created_on);
+		$statement->bindParam(':userid'	           , $this->user_id);
+		$statement->bindParam(':group_chat_message', $this->group_chat_message);
+		$statement->bindParam(':created_on'		   , $this->created_on);
 
 		$statement->execute(); // This returns a Boolean (true or false)
 	}
@@ -83,10 +83,10 @@ class ChatRooms
 	function get_all_chat_data()
 	{
 		$query =
-			"SELECT * FROM chatrooms 
-			INNER JOIN chat_user_table 
-			ON chat_user_table.user_id = chatrooms.userid 
-			ORDER BY chatrooms.id ASC"
+			"SELECT * FROM group_chat_messages 
+			INNER JOIN chat_application_users 
+			ON chat_application_users.user_id = group_chat_messages.userid 
+			ORDER BY group_chat_messages.id ASC"
 		;
 
 		$statement = $this->connect->prepare($query);

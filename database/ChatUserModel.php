@@ -1,11 +1,11 @@
 <?php
-// This class (a User Model) is used to store the users in the `chat_user_table` in the database table
+// This class (a User Model) is used to store the users in the `chat_application_users` in the database table
 
 
 
-class ChatUser
+class ChatUserModel
 {
-	// `chat_user_table` database table column names
+	// `chat_application_users` database table column names
 	private $user_id;
 	private $user_name;
 	private $user_email;
@@ -162,7 +162,7 @@ class ChatUser
 	function get_user_data_by_email()
 	{
 		$query = 
-			"SELECT * FROM chat_user_table 
+			"SELECT * FROM chat_application_users 
 			WHERE user_email = :user_email"
 		;
 
@@ -181,7 +181,7 @@ class ChatUser
 	function save_data()
 	{
 		$query =
-			"INSERT INTO chat_user_table (user_name, user_email, user_password, user_profile, user_status, user_created_on, user_verification_code) 
+			"INSERT INTO chat_application_users (user_name, user_email, user_password, user_profile, user_status, user_created_on, user_verification_code) 
 			VALUES (:user_name, :user_email, :user_password, :user_profile, :user_status, :user_created_on, :user_verification_code)"
 		;
 		$statement = $this->connect->prepare($query);
@@ -207,7 +207,7 @@ class ChatUser
 	function is_valid_email_verification_code()
 	{
 		$query = 
-			"SELECT * FROM chat_user_table 
+			"SELECT * FROM chat_application_users 
 			WHERE user_verification_code = :user_verification_code"
 		;
 
@@ -230,7 +230,7 @@ class ChatUser
 	function enable_user_account()
 	{
 		$query = 
-			"UPDATE chat_user_table
+			"UPDATE chat_application_users
 			SET user_status = :user_status
 			WHERE user_verification_code = :user_verification_code"
 		;
@@ -253,7 +253,7 @@ class ChatUser
 	function update_user_login_data()
 	{
 		$query =
-			"UPDATE chat_user_table 
+			"UPDATE chat_application_users 
 			SET
 				user_login_status = :user_login_status,
 				user_token 		  = :user_token  
@@ -280,7 +280,7 @@ class ChatUser
 	function get_user_data_by_id()
 	{
 		$query = 
-			"SELECT * FROM chat_user_table 
+			"SELECT * FROM chat_application_users 
 			WHERE user_id = :user_id"
 		;
 
@@ -319,7 +319,7 @@ class ChatUser
 	function update_data()
 	{
 		$query =
-			"UPDATE chat_user_table 
+			"UPDATE chat_application_users 
 			SET
 				user_name     = :user_name, 
 				user_email    = :user_email, 
@@ -349,7 +349,7 @@ class ChatUser
 	function get_user_all_data()
 	{
 		$query =
-			"SELECT * FROM chat_user_table "
+			"SELECT * FROM chat_application_users "
 		;
 
 		$statement = $this->connect->prepare($query);
@@ -359,25 +359,24 @@ class ChatUser
 		return $data;
 	}
 
-	function get_user_all_data_with_status_count() // This method gets every single (i.e. all users) user's data in `chat_user_table` table and the count of 'Unread' Messages that they (he/she) sent to the authenticated/logged-in user    // To get the number of the 'Unread' Messages sent to the authenticated/logged-in user from EVERY user in the `chat_user_table` database table based on the `status` column of the `chat_message` database table    // In other words, this method returns all user's data and how many 'Unread' Messages they (for every single user) have sent to the authenticated/logged-in user    // Another way to say it: This method returns the all (every) users's data and how many 'Unread' Messages the authenticated/logged-in user received from those users (every user)    // Get the number/count of the 'Unread' Messages that the authenticated/logged-in user received from all members/users
+	function get_user_all_data_with_status_count() // This method gets every single (i.e. all users) user's data in `chat_application_users` table and the count of 'Unread' Messages that they (he/she) sent to the authenticated/logged-in user
 	{
-		// The query retrieves information about users from the `chat_user_table` and includes an additional calculated column called `count_status`. This calculated column represents the count of chat messages sent to the authenticated/logged-in user where the `status` is 'No' (the count of the 'Unread' Messages). The query will return a list of users along with the count of such 'Unread' (i.e. `status` = 'No') messages for each user.
-		// Query Explanation: For EVERY user in the `chat_user_table` table, select `user_id`, `user_name`, `user_profile`, `user_login_status`, and the count/number of the 'Unread' Messages that they (he/she) sent to the authenticated/logged-in user (by using a Nested Query/Subquery that selects the messages that are sent from every user to the authenticated/logged-in user, and this message is 'Unread' i.e. `status` = 'No'. To further clarify this, here is an example: Select the data of 'Kassem' from `chat_user_table` table and the count of the 'Unread' Messages that he sent to the authenticated/logged-in user)
+		// Query Explanation: For EVERY user in the `chat_application_users` table, select `user_id`, `user_name`, `user_profile`, `user_login_status`, and the count/number of the 'Unread' Messages that they (he/she) sent to the authenticated/logged-in user (by using a Nested Query/Subquery that selects the messages that are sent from every user to the authenticated/logged-in user, and this message is 'Unread' i.e. `status` = 'No'. To further clarify this, here is an example: Select the data of 'Kassem' from `chat_application_users` table and the count of the 'Unread' Messages that he sent to the authenticated/logged-in user)
 		$query =
 			"SELECT
 				user_id,
 				user_name,
 				user_profile,
 				user_login_status,
-				(SELECT COUNT(*) FROM chat_message
+				(SELECT COUNT(*) FROM private_chat_messages
 					WHERE
 						to_user_id = :user_id
 					AND
-						from_user_id = chat_user_table.user_id
+						from_user_id = chat_application_users.user_id
 					AND
 						status = 'No'
 				) AS count_status
-			FROM chat_user_table"
+			FROM chat_application_users"
 		;
 
 		$statement = $this->connect->prepare($query);
@@ -391,7 +390,7 @@ class ChatUser
 	function update_user_connection_id()
 	{
 		$query =
-			"UPDATE chat_user_table 
+			"UPDATE chat_application_users 
 			SET user_connection_id = :user_connection_id 
 			WHERE user_token = :user_token"
 		;
@@ -407,7 +406,7 @@ class ChatUser
 	function get_user_id_from_token()
 	{
 		$query =
-			"SELECT user_id FROM chat_user_table 
+			"SELECT user_id FROM chat_application_users 
 			WHERE user_token = :user_token"
 		;
 

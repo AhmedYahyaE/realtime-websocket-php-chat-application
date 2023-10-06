@@ -1,5 +1,5 @@
 <?php 
-// Profile Page
+// User Profile Page
 
 
 session_start();
@@ -10,10 +10,10 @@ if (!isset($_SESSION['user_data'])) // If the user is unauthenticated/logged-out
 }
 
 
-require('database/ChatUser.php');
+require('database/ChatUserModel.php');
 
 
-$user_object = new ChatUser;
+$user_object = new ChatUserModel;
 $user_id = '';
 
 // Get the user ID from the Session
@@ -83,7 +83,7 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
 			<div class="card-header">
                 <div class="row">
                     <div class="col-md-6">Profile</div>
-                    <div class="col-md-6 text-right"><a href="chatroom.php" class="btn btn-warning btn-sm">Go to Chat</a></div>
+                    <div class="col-md-6 text-right"><a href="group_chat.php" class="btn btn-warning btn-sm">Go to <b>Group Chat</b></a></div>
                 </div>
             </div>
             <div class="card-body">
@@ -121,7 +121,7 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
 
 $(document).ready(function(){
 
-    $('#profile_form').parsley();
+    $('#profile_form').parsley(); // Fire up the Parsley JavaScript Validaton Library on the Profile HTML Form
 
     $('#user_profile').change(function(){
         var extension = $('#user_profile').val().split('.').pop().toLowerCase();

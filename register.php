@@ -19,21 +19,21 @@ if (isset($_POST["register"])) // If the registration HTML Form has been submitt
 {
     session_start();
 
-    // If the user is already authenticated/logged-in, redirect them to chatroom.php
+    // If the user is already authenticated/logged-in, redirect them to group_chat.php
     if (isset($_SESSION['user_data']))
     {
-        header('location:chatroom.php');
+        header('location:group_chat.php');
     }
 
 
 
-    require_once('database/ChatUser.php');
+    require_once('database/ChatUserModel.php');
 
 
 
-    $user_object = new ChatUser;
+    $user_object = new ChatUserModel;
 
-    // Fill in the ChatUser model with the registration HTML Form submitted data (using the Setter methods (Setters))
+    // Fill in the ChatUserModel model with the registration HTML Form submitted data (using the Setter methods (Setters))
     $user_object->setUserName($_POST['user_name']);
     $user_object->setUserEmail($_POST['user_email']);
     $user_object->setUserPassword($_POST['user_password']);
