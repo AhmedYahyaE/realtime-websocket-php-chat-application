@@ -1,5 +1,5 @@
 # Real-time WebSocket Technology Group/Public & One-to-One/Private Chat Application built with PHP and Ratchet Library
-This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat. Built with PHP and WebSocket technology, my application provides a seamless platform for instant communication.
+This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat. Built with WebSocket technology which allows full-duplex bi-directional connection over a single TCP connection, my application provides a seamless platform for instant communication.
 Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form validation library, and Bootstrap (responsive design).
 
 ## Screenshots:
@@ -21,7 +21,7 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 ![websocket-connection](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/62bc916c-f6e9-4dfd-a322-3fba92fc4d01)
 
 ## Features:
-1- Real-time Seamless Chat Messaging using WebSocket Technology.
+1- Real-time Seamless Chat Messaging using WebSocket Technology (Ratchet Library).
 
 2- Two Chat Modes: Group/Public Chat & One-to-One/Private Chat.
 
