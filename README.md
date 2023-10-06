@@ -1,6 +1,6 @@
 # Real-time WebSocket Technology Group & One-to-One/Private Chat Application built with PHP and Ratchet Library
 This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat. Built with PHP and WebSocket technology, my application provides a seamless platform for instant communication.
-Frontend technologies used: jQuery, JavaScript, AJAX and Bootstrap (responsive design).
+Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form validation library, and Bootstrap (responsive design).
 
 ## Screenshots:
 
@@ -31,23 +31,21 @@ Frontend technologies used: jQuery, JavaScript, AJAX and Bootstrap (responsive d
 
 5- Using Ratchet PHP WebSocket Library.
 
-6- Object-Oriented Programming.
+6- Saving the Chat History for both Public & Private Chat Modes in a MySQL Database.
 
-7- Create, update, and delete blog posts.
+7- Object-Oriented Programming.
 
-8- Categories and tags for organizing blog posts. Also, commenting system for blog posts.
+8- Chat HTML Form Validation using Parsley JavaScript Library.
 
-9- CRUD Operations.
+9- User Registration, Validation, Authentication, and Authorization.
 
-10- User Roles and Permissions.
+10- Sending Registration Verification Code to emails using PHPMailer Library.
 
-11- File Upload.
+11- File Upload (profile image).
 
-12- Using .htaccess Apache configuration file.
+12- Regular Expression.
 
-13- Regular Expression.
-
-14- Responsive / Mobile first Design.
+13- Responsive Design using Bootstrap.
 
 ## Application URLs:
 1- **Frontend**: The public-facing website can be accessed at https://www.your-domain-example.com/blog. This is where regular customers/users/members can view/read blog posts, add posts, comment on them, and interact with the website, .... The frontend URL is typically accessible to all visitors of the website. Replace https://www.your-domain-example.com/ with the actual domain name or localhost address where you have deployed the application.
