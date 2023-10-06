@@ -97,7 +97,7 @@ $user_data = $user_object->get_user_all_data();
 						<div class="card-header">
 							<div class="row">
 								<div class="col col-sm-6">
-									<h3>Group Chat Room</h3>
+									<h3>Group/Public Chat Room</h3>
 								</div>
 								<div class="col col-sm-6 text-right">
 									<a href="private_chat.php" class="btn btn-warning btn-sm">Go to <b>Private Chat</b></a>
