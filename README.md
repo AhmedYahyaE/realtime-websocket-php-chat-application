@@ -6,15 +6,15 @@ Frontend technologies used: jQuery, JavaScript, AJAX and Bootstrap (responsive d
 
 ***Group/Public Chat:***
 
-![group-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/17decefa-8e40-4609-b321-5ca34bdd0806)
+![group-public-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/29181d84-a56f-4e29-a793-b41e470d9533)
 
 ***One-to-One/Private Chat:***
 
-![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/55271096-b65f-4125-a0b7-6da2a6145015)
+![one-to-one-private-chat](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/01d8d728-39df-4d87-91a0-576206b44d91)
 
 ***Profile Page:***
 
-![profile-page](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/01e0c22e-f236-4702-8dba-f2fb35bafbf4)
+![profile-page](https://github.com/AhmedYahyaE/realtime-websocket-php-chat-application/assets/118033266/d74fc7ab-16a7-435e-8707-8008a1e9cb78)
 
 ## Features:
 1- MVC design pattern, Routing System, Service Container, Middlewares, Pagination Class, Entry Point/Script file (index.php) for the whole application, ...
