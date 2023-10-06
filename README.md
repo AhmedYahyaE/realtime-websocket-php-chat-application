@@ -44,7 +44,7 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 11- Sending Registration Verification Code to emails using PHPMailer Library.
 
-12- Playing different Notification Sounds when sending and receiving messages.
+12- Playing different Notification Sounds when sending and receiving chat messages.
 
 13- File Upload (profile image).
 
