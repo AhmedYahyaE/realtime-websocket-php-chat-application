@@ -1,4 +1,4 @@
-# Real-time WebSocket Technology Group & One-to-One/Private Chat Application built with PHP and Ratchet Library
+# Real-time WebSocket Technology Group/Public & One-to-One/Private Chat Application built with PHP and Ratchet Library
 This project is a real-time chat application developed using PHP and WebSocket technology (using Ratchet Library). It provides a seamless and interactive platform for users to engage in real-time conversations, featuring two chat modes: Group/Public Chat & One-to-One/Private Chat. Built with PHP and WebSocket technology, my application provides a seamless platform for instant communication.
 Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form validation library, and Bootstrap (responsive design).
 
@@ -33,24 +33,26 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 
 6- Saving the Chat History for both Public & Private Chat Modes in a MySQL Database.
 
-7- Object-Oriented Programming.
+7- Multiple AJAX Requests.
 
-8- Chat HTML Form Validation using Parsley JavaScript Library.
+8- Object-Oriented Programming.
 
-9- User Registration, Validation, Authentication, and Authorization.
+9- Chat HTML Form Validation using Parsley JavaScript Library.
 
-10- Sending Registration Verification Code to emails using PHPMailer Library.
+10- User Registration, Validation, Authentication, and Authorization.
 
-11- File Upload (profile image).
+11- Sending Registration Verification Code to emails using PHPMailer Library.
 
-12- Regular Expression.
+12- File Upload (profile image).
 
-13- Responsive Design using Bootstrap.
+13- Regular Expression.
+
+14- Responsive Design using Bootstrap.
 
 ## Application URLs:
-1- **Frontend**: The public-facing website can be accessed at https://www.your-domain-example.com/blog. This is where regular customers/users/members can view/read blog posts, add posts, comment on them, and interact with the website, .... The frontend URL is typically accessible to all visitors of the website. Replace https://www.your-domain-example.com/ with the actual domain name or localhost address where you have deployed the application.
+1- **Group/Public Chat**: Engage in lively discussions with ALL the Chat Application users at http://localhost:8000/group_chat.php
 
-2- **Admin Panel**: The Admin Panel for managing the blog is available at https://www.your-domain-example.com/blog/admin/login or https://www.your-domain-example.com/blog/admin. This is a secure area accessible only to authorized administrators. It provides access to the administrative functionalities of the blog application. It is designed for authorized users with administrative privileges to manage the blog posts, comments, and user accounts. Only authenticated administrators can access the admin panel. The Admin Panel URL is protected and restricted to a specific set of users. Again, make sure to replace https://www.your-domain-example.com/ with the appropriate domain name or localhost address.
+2- **Admin Panel**: Connect with individuals privately, ensuring confidential and personalized interactions. Chat with one particular, specific, targeted user of our Chat Application members at http://localhost:8000/private_chat.php
 
 ## Application Routes:
 All the application routes are defined in the [Application Routes](App/index.php) file.
