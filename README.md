@@ -52,10 +52,7 @@ Frontend technologies used: jQuery, JavaScript, AJAX, Parsley JavaScript form va
 ## Application URLs:
 1- **Group/Public Chat**: Engage in lively discussions with ALL the Chat Application users at http://localhost:8000/group_chat.php
 
-2- **Admin Panel**: Connect with individuals privately, ensuring confidential and personalized interactions. Chat with one particular, specific, targeted user of our Chat Application members at http://localhost:8000/private_chat.php
-
-## Application Routes:
-All the application routes are defined in the [Application Routes](App/index.php) file.
+2- **One-to-One/Private Chat**: Connect with individuals privately, ensuring confidential and personalized interactions. Chat with one particular, specific, targeted user of our Chat Application members at http://localhost:8000/private_chat.php
 
 ## Installation & Configuration:
 1- Clone the project or download it.
