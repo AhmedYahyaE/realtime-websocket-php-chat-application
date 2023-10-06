@@ -11,7 +11,6 @@ require dirname(__DIR__) . "/database/PrivateChatMessageModel.php";
 
 
 
-// http://socketo.me/docs/hello-world#next_steps:~:text=We%27ll%20start%20off%20by%20creating%20a%20class.%20This%20class%20will%20be%20our%20chat%20%22application%22.%20This%20basic%20application%20will%20listen%20for%204%20events
 class Chat implements MessageComponentInterface { // The 'Chat' class is our custom WebSocket handler class that implements the 'MessageComponentInterface' of the Ratchet library
     protected $clients;
 

@@ -100,7 +100,7 @@ $user_data = $user_object->get_user_all_data();
 									<h3>Group Chat Room</h3>
 								</div>
 								<div class="col col-sm-6 text-right">
-									<a href="private_chat.php" class="btn btn-success btn-sm">Go to <b>Private Chat</b></a>
+									<a href="private_chat.php" class="btn btn-warning btn-sm">Go to <b>Private Chat</b></a>
 								</div>
 							</div>
 						</div>
@@ -121,7 +121,7 @@ $user_data = $user_object->get_user_all_data();
 									{
 										$from = $chat['user_name'];
 										$row_class = 'row justify-content-end';
-										$background_class = 'alert-success';
+										$background_class = 'alert-info';
 									}
 
 									echo '
@@ -174,8 +174,8 @@ $user_data = $user_object->get_user_all_data();
 							<div class="mt-3 mb-3 text-center">
 								<img src="<?php echo $value['profile']; ?>" width="150" class="img-fluid rounded-circle img-thumbnail" />
 								<h3 class="mt-2"><?php echo $value['name']; ?></h3>
-								<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
-								<input type="button" class="btn btn-primary mt-2 mb-2" name="logout" id="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call to action.php -->
+								<a href="profile.php" class="btn btn-success mt-2 mb-2">Edit</a>
+								<input type="button" class="btn btn-secondary mt-2 mb-2" name="logout" id="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call to action.php -->
 							</div>
 					<?php
 						}

@@ -93,13 +93,13 @@ require('database/GroupChatMessageModel.php');
 
 							<div class="mt-3 mb-3 text-center">
 								<div>
-									<a href="group_chat.php" class="btn btn-success">Go to <b>Group Chat</b></a>
+									<a href="group_chat.php" class="btn btn-warning">Go to <b>Group Chat</b></a>
 								</div>
 								<br>
 								<img src="<?php echo $value['profile']; ?>" class="img-fluid rounded-circle img-thumbnail" width="150" />
 								<h3 class="mt-2"><?php echo $value['name']; ?></h3>
-								<a href="profile.php" class="btn btn-secondary mt-2 mb-2">Edit</a>
-								<input type="button" class="btn btn-primary mt-2 mb-2" id="logout" name="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call to action.php -->
+								<a href="profile.php" class="btn btn-success mt-2 mb-2">Edit</a>
+								<input type="button" class="btn btn-secondary mt-2 mb-2" id="logout" name="logout" value="Logout" /> <!-- Logout is done using AJAX. Check the <script> HTML tag at the bottom of this file for the AJAX call to action.php -->
 							</div>
 					<?php
 						}
@@ -161,7 +161,7 @@ require('database/GroupChatMessageModel.php');
 				
 				<div class="col-lg-9 col-md-8 col-sm-7">
 					<br />
-					<h3 class="text-center">Real-time One-to-One Private Chat Application using Ratchet WebSocket with PHP & MySQL - Online/Offline Status</h3>
+					<h3 class="text-center">Real-time One-to-One/Private Chat Application using Ratchet WebSocket with PHP & MySQL - Online/Offline Status</h3>
 					<hr />
 					<br />
 					<div id="chat_area"></div> <!-- We'll use JavaScript down below to load 'One-to-One/Private' Chat Area with every single chat user (when a targeted user is clicked on the left side of the page) -->
@@ -296,7 +296,7 @@ require('database/GroupChatMessageModel.php');
 									<b>Private Chat with: <span class="text-danger" id="chat_user_name">${user_name}</span></b>
 								</div>
 								<div class="col col-sm-6 text-right">
-									<a href="group_chat.php" class="btn btn-success btn-sm">Go to <b>Group Chat</b></a>&nbsp;&nbsp;&nbsp;
+									<a href="group_chat.php" class="btn btn-warning btn-sm">Go to <b>Group Chat</b></a>&nbsp;&nbsp;&nbsp;
 									<button type="button" class="close" id="close_chat_area" data-dismiss="alert" aria-label="Close">
 										<span aria-hidden="true">&times;</span>
 									</button>

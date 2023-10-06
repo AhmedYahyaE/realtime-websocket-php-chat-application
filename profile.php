@@ -108,7 +108,7 @@ if (isset($_POST['edit'])) // If the Edit Profile HTML Form has been submitted (
                         <input type="hidden" name="hidden_user_profile" value="<?php echo $user_data['user_profile']; ?>" />
                     </div>
                     <div class="form-group text-center">
-                        <input type="submit" name="edit" class="btn btn-primary" value="Edit" />
+                        <input type="submit" name="edit" class="btn btn-success" value="Edit" />
                     </div>
                 </form>
             </div>
